@@ -978,6 +978,11 @@
     bar.hidden = !(mode === 'editor' && step === 2 && o);
     if (bar.hidden) return;
     bar.replaceChildren(el('span', 'pick-label', t('pickedColor')));
+    // The Thai flag and the rainbow ring keep their own colours: say so rather than offer swatches that do nothing.
+    if (ORNAMENTS[o.type].fixed) {
+      bar.append(el('span', 'pick-fixed', t('ownColorsOnly')));
+      return;
+    }
     swatches(bar, COLOR_CHOICES, o.color, (i) => {
       Sound.play('tap');
       change(() => (state.objects.find((item) => item.id === selected).color = COLOR_CHOICES[i]));

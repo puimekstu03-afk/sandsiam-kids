@@ -208,6 +208,12 @@
   white-space: nowrap;
 }
 
+/* In place of the swatches, for a piece that keeps its own colours (the Thai flag). */
+.pick-fixed {
+  color: var(--muted);
+  font: 600 0.9375rem var(--font-display);
+}
+
 /* The colour palette takes the hint's place while a piece is chosen. */
 .stage:has(.pick-palette:not([hidden])) .scene-note {
   display: none;

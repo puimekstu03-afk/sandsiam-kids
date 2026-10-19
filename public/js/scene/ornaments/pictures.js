@@ -98,25 +98,52 @@ function hslToRgb(h, s, l) {
 
 const hueGap = (a, b) => ((a - b + 540) % 360) - 180;
 
-/** The picture with its main colour turned into `color`; leaves, gold and outlines stay. */
-function recolourPicture(img, mainHue, color) {
+const ramp = (v, from, to) => Math.max(0, Math.min(1, (v - from) / (to - from)));
+
+/**
+ * How much (0…1) a pixel belongs to the part a `tint` colours: 'white' petals, 'cream' wax,
+ * or 'grey' silver and an elephant's skin. Measured by how colourful the pixel is (chroma),
+ * since very light colours can look strongly saturated in HSL; soft edges, so a petal that
+ * fades from white into yellow takes the colour without a seam.
+ */
+function paleFor(tint, r, g, b, l) {
+  const chroma = (Math.max(r, g, b) - Math.min(r, g, b)) / 255;
+  if (tint === 'white') return ramp(chroma, 0.3, 0.16) * ramp(l, 0.5, 0.62);
+  if (tint === 'cream') return ramp(chroma, 0.44, 0.32) * ramp(l, 0.52, 0.64);
+  if (tint === 'grey') return ramp(chroma, 0.16, 0.1) * ramp(l, 0.25, 0.33) * ramp(l, 0.95, 0.88);
+  return 0;
+}
+
+/**
+ * The picture in the chosen colour. Its main colour (def.hue) turns into `color`, and where
+ * the picture's colour is white or grey (def.tint), those parts take on `color` too, keeping
+ * their light and shade. Leaves, gold and outlines stay.
+ */
+function recolourPicture(img, def, color) {
   const [th, ts, tl] = hexToHsl(color);
   const ivory = tl > 0.85;
-  const shift = hueGap(th, mainHue);
-  if (!ivory && Math.abs(shift) <= 10) return img;
+  const mainHue = typeof def.hue === 'number' ? def.hue : null;
+  const shift = mainHue === null ? 0 : hueGap(th, mainHue);
+  const shifting = mainHue !== null && (ivory || Math.abs(shift) > 10);
+  if (!shifting && !def.tint) return img;
   const data = picturePixels(img);
   if (!data) return img;
   const px = data.data;
   for (let i = 0; i < px.length; i += 4) {
     if (px[i + 3] < 8) continue;
     const [h, s, l] = rgbToHsl(px[i], px[i + 1], px[i + 2]);
-    if (s < 0.25 || Math.abs(hueGap(h, mainHue)) > 30) continue;
-    const rgb = ivory
-      ? hslToRgb(45, s * 0.3, 0.62 + l * 0.36)
-      : hslToRgb((h + shift + 360) % 360, Math.min(1, s * (0.7 + ts * 0.4)), l);
-    px[i] = rgb[0];
-    px[i + 1] = rgb[1];
-    px[i + 2] = rgb[2];
+    let rgb = null;
+    let amount = 1;
+    if (shifting && s >= 0.25 && Math.abs(hueGap(h, mainHue)) <= 30) {
+      rgb = ivory ? hslToRgb(45, s * 0.3, 0.62 + l * 0.36) : hslToRgb((h + shift + 360) % 360, Math.min(1, s * (0.7 + ts * 0.4)), l);
+    } else if (def.tint && (amount = paleFor(def.tint, px[i], px[i + 1], px[i + 2], l)) > 0) {
+      // Halfway between its own lightness and the colour's, so petals stay soft and shaded.
+      rgb = ivory ? hslToRgb(45, 0.35, 0.55 + l * 0.42) : hslToRgb(th, ts * (def.tint === 'grey' ? 0.7 : 0.8), l * 0.5 + tl * 0.5);
+    }
+    if (!rgb) continue;
+    px[i] += (rgb[0] - px[i]) * amount;
+    px[i + 1] += (rgb[1] - px[i + 1]) * amount;
+    px[i + 2] += (rgb[2] - px[i + 2]) * amount;
   }
   const out = document.createElement('canvas');
   out.width = img.naturalWidth;
@@ -134,7 +161,7 @@ function ornamentImage(type, color) {
   const def = ORNAMENTS[type];
   if (color === ORIGINAL || def.fixed) return img;
   const key = `${type}|${color}`;
-  if (!pictureCache.has(key)) pictureCache.set(key, recolourPicture(img, def.hue, color));
+  if (!pictureCache.has(key)) pictureCache.set(key, recolourPicture(img, def, color));
   return pictureCache.get(key);
 }
 
@@ -148,10 +175,10 @@ function ringFlowerImages(type, color) {
   const imgs = flowers.map((flower) => ringPictures[flower]);
   if (!imgs.every(ready)) return null;
   if (color === ORIGINAL || def.fixed || flowers !== def.ring) return imgs;
-  const hue = type === RING ? 32 : def.hue;
+  const look = { hue: type === RING ? 32 : def.hue, tint: def.tint };
   return imgs.map((img, i) => {
-    const key = `ring|${flowers[i]}|${color}`;
-    if (!pictureCache.has(key)) pictureCache.set(key, recolourPicture(img, hue, color));
+    const key = `ring|${type}|${flowers[i]}|${color}`;
+    if (!pictureCache.has(key)) pictureCache.set(key, recolourPicture(img, look, color));
     return pictureCache.get(key);
   });
 }
