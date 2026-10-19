@@ -1,0 +1,174 @@
+/* ==========================================================================
+   SANDSIAM Kids · Top bar: home, help, language, sound and the player's name
+   ========================================================================== */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-topbar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--topbar-h);
+  padding: 0 var(--edge);
+  pointer-events: none;
+}
+
+.is-editor .topbar,
+.is-share .topbar,
+.is-field .topbar {
+  right: var(--panel-w);
+}
+
+.topbar > * {
+  pointer-events: auto;
+}
+
+.topbar-icons,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+/* Round white toy buttons with a thick outline. */
+.icon-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--pop-sm);
+  cursor: pointer;
+  transition: transform 0.18s var(--ease-bounce), background 0.18s;
+}
+
+.icon-btn:hover {
+  background: var(--sun-soft);
+  transform: translateY(-2px) rotate(-3deg);
+}
+
+.icon-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+#home { background: var(--sun); }
+#help { background: var(--sky); color: var(--white); }
+
+#help svg {
+  stroke-width: 2.6;
+}
+
+.lang-btn {
+  display: flex;
+  gap: 6px;
+  width: auto;
+  padding: 0 var(--s-3) 0 10px;
+}
+
+.lang-btn select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 700 1.0625rem var(--font-display);
+  cursor: pointer;
+}
+
+.lang-btn select:focus-visible {
+  outline: none;
+}
+
+.lang-btn:focus-within {
+  outline: 4px solid var(--pink);
+  outline-offset: 3px;
+}
+
+.lang-btn option {
+  color: var(--ink);
+}
+
+.player-btn {
+  display: flex;
+  gap: 6px;
+  width: auto;
+  max-width: 14rem;
+  padding: 0 var(--s-4) 0 var(--s-3);
+  background: var(--pink-soft);
+  font: 700 1rem var(--font-display);
+}
+
+.player-btn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon-sound-off,
+#sound.is-muted .icon-sound-on {
+  display: none;
+}
+
+#sound.is-muted .icon-sound-off {
+  display: block;
+}
+
+#sound.is-muted {
+  background: var(--line-soft);
+}
+
+#music {
+  background: var(--grape-soft);
+}
+
+.icon-music-off,
+#music.is-muted .icon-music-on {
+  display: none;
+}
+
+#music.is-muted .icon-music-off {
+  display: block;
+}
+
+#music.is-muted {
+  background: var(--line-soft);
+}
+
+/* Before the first tap the browser keeps the tune silent: the button wiggles to invite one. */
+#music.is-waiting {
+  animation: wiggle 1.6s ease-in-out infinite;
+}
+
+/* The note bobs along while the tune plays. */
+#music.is-playing:not(.is-muted) .icon-music-on {
+  animation: note-bob 1.43s ease-in-out infinite;
+}
+
+.wordmark {
+  font: 700 1.1875rem var(--font-display);
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+
+.wordmark-light {
+  padding: 4px 14px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: var(--pop-sm);
+}
+
+/* The light wordmark only belongs to the intro; panels carry their own. */
+.is-editor .wordmark-light,
+.is-share .wordmark-light,
+.is-field .wordmark-light,
+.is-intro .wordmark-light {
+  display: none;
+}

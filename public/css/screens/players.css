@@ -1,0 +1,84 @@
+/* ==========================================================================
+   SANDSIAM Kids · Who's playing? Nickname cards for a shared classroom computer
+   ========================================================================== */
+
+.players h2 .icon {
+  width: 30px;
+  height: 30px;
+  color: var(--orange);
+}
+
+.player-list {
+  display: grid;
+  gap: var(--s-3);
+  margin: var(--s-4) 0;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.player-pick {
+  flex: 1;
+  min-height: 58px;
+  padding: var(--s-2) var(--s-4);
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: var(--white);
+  font: 700 1.3125rem var(--font-display);
+  text-align: left;
+  box-shadow: var(--pop-sm);
+  transition: transform 0.2s var(--ease-bounce);
+}
+
+.player-pick:hover {
+  transform: translateY(-2px);
+  background: var(--sky-soft);
+}
+
+.player-pick.is-current {
+  background: var(--sun);
+}
+
+.player-remove {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--muted);
+}
+
+.player-remove .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.player-remove:hover {
+  background: var(--red-soft);
+  color: var(--red-deep);
+}
+
+.player-confirm {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.player-new label {
+  display: block;
+  margin-bottom: var(--s-2);
+  font: 700 1.125rem var(--font-display);
+}
+
+.player-new-row {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.player-new-row .input {
+  flex: 1;
+  margin: 0;
+  font-size: 1.125rem;
+}

@@ -1,0 +1,100 @@
+/* ==========================================================================
+   SANDSIAM Kids · Motion: every keyframe in one place.
+   All motion stops when the visitor prefers reduced motion.
+   ========================================================================== */
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translate(-50%, -16px) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes sheet-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.85); }
+  70% { opacity: 1; transform: scale(1.03); }
+  100% { transform: none; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* A happy little wobble for things children can touch. */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes guide-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes guide-out {
+  to { opacity: 0; transform: translateY(24px) scale(0.9); }
+}
+
+@keyframes guide-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes sticker-pop {
+  0% { opacity: 0; transform: scale(0.4) rotate(-12deg); }
+  18% { opacity: 1; transform: scale(1.12) rotate(5deg); }
+  30% { transform: scale(1) rotate(0); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9) translateY(-24px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.6) rotate(0); }
+  50% { opacity: 1; transform: scale(1.1) rotate(20deg); }
+}
+
+@keyframes letter-hop {
+  0%, 20%, 100% { transform: translateY(0); }
+  8% { transform: translateY(-5px); }
+}
+
+@keyframes note-bob {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-2px) rotate(-8deg); }
+  75% { transform: translateY(-2px) rotate(8deg); }
+}
+
+@keyframes shake {
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes drag-demo {
+  0%, 15% { transform: translate(-30px, 10px); }
+  60%, 80% { transform: translate(18px, -14px); }
+  100% { transform: translate(-30px, 10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,350 @@
+/* ==========================================================================
+   SANDSIAM Kids · Intro: title badge, live counter, regions and start buttons
+   over the cartoon scene
+   ========================================================================== */
+
+.hero {
+  position: fixed;
+  top: calc(var(--topbar-h) + var(--s-2));
+  left: 50%;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+  max-width: calc(100vw - var(--s-6));
+  transform: translateX(-50%);
+  text-align: center;
+  animation: hero-in 0.6s var(--ease-bounce) both;
+}
+
+/* The title on a big sticker-book badge: cream paper with tiny dots and a stitched edge.
+   The counter pill below tucks over its bottom edge, so the badge leaves room for it. */
+.splash {
+  position: relative;
+  padding: var(--s-6) var(--s-7) 44px;
+  border: 4px solid var(--ink);
+  border-radius: 40px;
+  background:
+    radial-gradient(circle, var(--sun-soft) 2px, transparent 2.5px) 0 0 / 18px 18px,
+    var(--paper);
+  box-shadow: var(--pop-lg);
+}
+
+.splash::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border: 2.5px dashed #f0c98a;
+  border-radius: 31px;
+  pointer-events: none;
+}
+
+/* The name sits on a tilted ribbon across the top edge. */
+.splash-brand {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  padding: 2px 18px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  font: 700 1.125rem var(--font-display);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  box-shadow: var(--pop-sm);
+  transform: translateX(-50%) rotate(-3deg);
+}
+
+.hero-title {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Room for Thai marks above the big line (ย์, ทั่ว) so they never touch the line above. */
+  gap: 0.3em;
+  font: 700 2rem/1.25 var(--font-display);
+  color: var(--pink-deep);
+}
+
+/* The big line is lettered like a cartoon logo: candy fill, thick plum outline, hard drop.
+   The stroke is in em so it keeps its weight at every size; paint-order keeps it outside the fill. */
+.hero-title-accent {
+  color: var(--sky);
+  font-size: 3.5rem;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  -webkit-text-stroke: 0.13em var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 0 0.1em 0 var(--ink);
+}
+
+.splash-flower {
+  position: absolute;
+  pointer-events: none;
+  animation: float 4s ease-in-out infinite;
+}
+
+.splash-flower-a {
+  left: -50px;
+  bottom: -22px;
+  width: 104px;
+  rotate: -12deg;
+}
+
+.splash-flower-b {
+  right: -34px;
+  top: -30px;
+  width: 66px;
+  rotate: 14deg;
+  animation-delay: -1.4s;
+}
+
+.splash-flower-c {
+  right: -52px;
+  bottom: -24px;
+  width: 94px;
+  rotate: 8deg;
+  animation-delay: -2.6s;
+}
+
+/* Little stars that twinkle around the badge. */
+.splash-sparkle {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  pointer-events: none;
+  animation: twinkle 2.2s ease-in-out infinite;
+}
+
+.splash-sparkle-a {
+  top: 14px;
+  left: -36px;
+}
+
+.splash-sparkle-b {
+  top: -40px;
+  right: 22%;
+  width: 20px;
+  height: 20px;
+  fill: var(--white);
+  animation-delay: -0.8s;
+}
+
+.splash-sparkle-c {
+  right: -44px;
+  top: 42%;
+  width: 18px;
+  height: 18px;
+  fill: var(--pink);
+  animation-delay: -1.5s;
+}
+
+/* The letters of the name hop one after another, like a wave. */
+.splash-brand span {
+  display: inline-block;
+  animation: letter-hop 3.2s ease-in-out infinite;
+}
+
+.splash-brand span:nth-child(2) { animation-delay: 0.08s; }
+.splash-brand span:nth-child(3) { animation-delay: 0.16s; }
+.splash-brand span:nth-child(4) { animation-delay: 0.24s; }
+.splash-brand span:nth-child(5) { animation-delay: 0.32s; }
+.splash-brand span:nth-child(6) { animation-delay: 0.4s; }
+.splash-brand span:nth-child(7) { animation-delay: 0.48s; }
+.splash-brand span:nth-child(8) { animation-delay: 0.56s; }
+
+/* A white tag pinned over the badge's bottom edge. */
+.counter {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-top: -26px;
+  padding: 4px var(--s-5);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font: 600 1.125rem var(--font-display);
+  box-shadow: var(--pop);
+}
+
+.counter .icon-star {
+  align-self: center;
+  width: 24px;
+  height: 24px;
+}
+
+.counter b {
+  color: var(--pink-deep);
+  font: 700 1.75rem/1.2 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.counter span:empty {
+  display: none;
+}
+
+.intro-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  /* Room below the buttons for the footer line on big screens. */
+  padding: 0 var(--edge) calc(var(--s-5) + 22px);
+}
+
+.regions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: 100%;
+}
+
+.regions-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: 4px 4px 8px;
+}
+
+/* One chip per region, each with its own colour dot. */
+.region-btn {
+  --progress: 0;
+  --region: var(--north);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  padding: 6px var(--s-3) 6px 10px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font: 700 1.0625rem var(--font-display);
+  box-shadow: var(--pop-sm);
+  transition: background 0.18s, transform 0.2s var(--ease-bounce);
+}
+
+.region-btn:nth-child(2) { --region: var(--central); }
+.region-btn:nth-child(3) { --region: var(--isan); }
+.region-btn:nth-child(4) { --region: var(--east); }
+.region-btn:nth-child(5) { --region: var(--south); }
+
+.region-btn::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--region);
+}
+
+.region-btn small {
+  min-width: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--sun-soft);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* While a region is on show, a bar fills along the bottom of its chip. */
+.region-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: var(--ink);
+  opacity: 0.25;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.region-btn:hover {
+  transform: translateY(-2px);
+}
+
+.region-btn.is-active {
+  background: var(--region);
+  transform: translateY(-3px) scale(1.06);
+}
+
+.region-btn.is-active::before {
+  background: var(--white);
+}
+
+.region-btn.is-active small {
+  background: var(--white);
+}
+
+.region-btn.is-active::after {
+  transform: scaleX(var(--progress));
+}
+
+.regions-caption {
+  max-width: 62ch;
+  padding: 4px var(--s-4);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: var(--pop-sm);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+
+#start {
+  animation: wiggle 2.4s ease-in-out 1.2s infinite;
+}
+
+#start:hover {
+  animation: none;
+}
+
+.resume-link {
+  padding: 2px var(--s-4);
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--mint-soft);
+  color: var(--mint-deep);
+  font: 700 1.0625rem var(--font-display);
+  box-shadow: var(--pop-sm);
+}
+
+.site-footer {
+  position: fixed;
+  right: var(--edge);
+  bottom: var(--s-2);
+  z-index: var(--z-overlay);
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+  font-size: 0.8125rem;
+}

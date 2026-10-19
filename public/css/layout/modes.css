@@ -1,0 +1,37 @@
+/* ==========================================================================
+   SANDSIAM Kids · Modes: which parts show on the intro, editor, share view and field.
+   app.js sets one of .is-intro / .is-editor / .is-share / .is-field on <body>.
+   ========================================================================== */
+
+.is-intro .panel,
+.is-intro .stage-tools,
+.is-intro .scene-note,
+.is-intro .delete-btn,
+.is-editor .hero,
+.is-editor .intro-bottom,
+.is-editor .site-footer,
+.is-editor .share-view,
+.is-editor .field-view,
+.is-share .editor,
+.is-share .field-view,
+.is-share .stage-tools,
+.is-share .scene-note,
+.is-share .delete-btn,
+.is-share .hero,
+.is-share .intro-bottom,
+.is-share .site-footer,
+.is-field .editor,
+.is-field .share-view,
+.is-field .stage-tools,
+.is-field .scene-note,
+.is-field .delete-btn,
+.is-field .hero,
+.is-field .intro-bottom,
+.is-field .site-footer {
+  display: none;
+}
+
+/* The drag hint only shows while decorating. */
+body:not([data-step='2']) .scene-note {
+  display: none;
+}

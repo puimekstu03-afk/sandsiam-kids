@@ -1,0 +1,44 @@
+/* ==========================================================================
+   SANDSIAM Kids · Large screens and small laptops / tablets
+   ========================================================================== */
+
+/* The panel and the text grow together on big screens (see html in reset.css). */
+@media (min-width: 1600px) {
+  :root {
+    --edge: 28px;
+  }
+}
+
+/* Small laptops and tablets: a slimmer panel. */
+@media (max-width: 1100px) {
+  :root {
+    --panel-w: 26rem;
+    --gap: 10px;
+    --edge: 16px;
+  }
+
+  .panel-head,
+  .editor-head,
+  .editor-foot,
+  .share-body,
+  .field-body {
+    padding-left: var(--s-4);
+    padding-right: var(--s-4);
+  }
+
+  .editor-body {
+    padding: 0 var(--s-4) var(--s-4);
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-title-accent {
+    font-size: 2.5rem;
+  }
+
+  .site-footer {
+    display: none;
+  }
+}

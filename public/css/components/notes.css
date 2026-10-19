@@ -1,0 +1,68 @@
+/* ==========================================================================
+   SANDSIAM Kids · Notes: tips, small print, the save status and info cards
+   ========================================================================== */
+
+.tip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border: var(--bw) dashed var(--sun-deep);
+  border-radius: var(--radius);
+  background: var(--sun-soft);
+  color: #6b4500;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* A light bulb in front of every tip. */
+.tip .icon {
+  width: 26px;
+  height: 26px;
+  margin-top: 1px;
+  color: var(--sun-deep);
+  stroke-width: 2.6;
+}
+
+.fine-print {
+  margin-top: var(--s-3);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.save-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--s-6);
+  color: var(--mint-deep);
+  font: 600 0.9375rem var(--font-display);
+}
+
+.save-status .icon {
+  stroke-width: 3;
+}
+
+.save-status.is-failed {
+  align-items: flex-start;
+  color: var(--red-deep);
+}
+
+.tradition {
+  padding: var(--s-4);
+  border: var(--bw) solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.region-note {
+  margin-top: var(--s-2);
+  color: var(--pink-deep);
+  font-size: 1rem;
+  line-height: 1.7;
+}

@@ -1,0 +1,60 @@
+/* ==========================================================================
+   SANDSIAM Kids · Step 5: the blessing card, two big choices, starting over kept apart
+   ========================================================================== */
+
+.blessing-card {
+  position: relative;
+  padding: var(--s-5) var(--s-4);
+  border: var(--outline);
+  border-radius: var(--radius);
+  background:
+    repeating-linear-gradient(transparent 0 33px, rgba(167, 123, 255, 0.18) 33px 35px),
+    var(--white);
+  text-align: center;
+  box-shadow: var(--pop);
+  rotate: -1deg;
+}
+
+.blessing-seal {
+  color: var(--pink);
+  line-height: 1;
+}
+
+.blessing-seal .icon {
+  width: 36px;
+  height: 36px;
+}
+
+.blessing-text {
+  margin: var(--s-3) 0 var(--s-1);
+  color: var(--ink);
+  font: 600 1.3125rem/1.65 var(--font-display);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.blessing-name {
+  color: var(--muted);
+  font: 600 1.0625rem var(--font-display);
+}
+
+.editor-body .btn-block {
+  margin-top: var(--s-3);
+}
+
+.editor-body .blessing-card + .btn-block {
+  margin-top: var(--s-5);
+}
+
+.big-actions {
+  display: grid;
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+
+.restart-zone {
+  margin-top: var(--s-7);
+  padding-top: var(--s-4);
+  border-top: 3px dashed var(--line);
+  text-align: center;
+}

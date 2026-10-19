@@ -1,0 +1,91 @@
+/* ==========================================================================
+   SANDSIAM Kids · Step 1: tap a region on the map of Thailand
+   ========================================================================== */
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.thai-map {
+  width: 100%;
+  height: auto;
+  max-height: 430px;
+  stroke: none;
+  overflow: visible;
+}
+
+.map-region {
+  fill: color-mix(in srgb, var(--region) 60%, #ffffff);
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill 0.18s;
+}
+
+.map-region:hover,
+.map-region:focus-visible {
+  fill: color-mix(in srgb, var(--region) 85%, #ffffff);
+  outline: none;
+}
+
+.map-region.is-selected {
+  fill: var(--region);
+  stroke-width: 4;
+  filter: drop-shadow(0 4px 0 var(--ink));
+}
+
+.map-label {
+  fill: var(--ink);
+  font: 700 1.375rem var(--font-display);
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 6;
+  pointer-events: none;
+}
+
+.region-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--region) 18%, #ffffff);
+  box-shadow: var(--pop);
+}
+
+.region-card-body b {
+  display: block;
+  font: 700 1.3125rem var(--font-display);
+}
+
+.region-card-body em {
+  display: inline-block;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--pink-deep);
+  font-size: 0.9375rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.region-card-body p {
+  margin-top: var(--s-2);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* A small picture of the region's cartoon backdrop (set by app.js). */
+.place-thumb {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border: var(--outline);
+  border-radius: var(--radius-sm);
+  background: center 40% / cover no-repeat var(--sky-soft);
+}

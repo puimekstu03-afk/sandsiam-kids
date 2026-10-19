@@ -1,0 +1,5 @@
+.DS_Store
+_backup_cartoon/
+supabase/.db-password
+supabase/.temp/
+__pycache__/

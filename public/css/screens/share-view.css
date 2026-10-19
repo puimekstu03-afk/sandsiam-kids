@@ -1,0 +1,143 @@
+/* ==========================================================================
+   SANDSIAM Kids · Celebration view: the finished pagoda and its blessing
+   ========================================================================== */
+
+.share-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-5) var(--s-5) var(--s-5);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s var(--ease-out), transform 0.45s var(--ease-bounce);
+}
+
+.share-view.is-shown .share-body {
+  opacity: 1;
+  transform: none;
+}
+
+.share-place {
+  display: inline-block;
+  padding: 2px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--sun-soft);
+  color: var(--ink);
+  font: 700 0.9375rem var(--font-display);
+}
+
+.share-view h2 {
+  margin-top: var(--s-3);
+  color: var(--pink-deep);
+  font: 700 1.875rem/1.3 var(--font-display);
+  text-shadow: 0 3px 0 var(--sun-soft);
+}
+
+.share-by {
+  margin-top: var(--s-2);
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+/* The blessing as a little letter. */
+.share-wish {
+  margin: var(--s-5) 0 0;
+  padding: var(--s-5);
+  border: var(--outline);
+  border-radius: var(--radius);
+  background:
+    repeating-linear-gradient(transparent 0 33px, rgba(167, 123, 255, 0.18) 33px 35px),
+    var(--white);
+  box-shadow: var(--pop);
+  rotate: 1deg;
+}
+
+.share-wish blockquote {
+  margin: 0;
+  color: var(--ink);
+  font: 600 1.375rem/1.6 var(--font-display);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.share-wish figcaption {
+  margin-top: var(--s-2);
+  color: var(--muted);
+  font: 600 1.0625rem var(--font-display);
+}
+
+.share-wish figcaption:empty {
+  display: none;
+}
+
+.share-kids {
+  margin-top: var(--s-5);
+  padding: var(--s-3) var(--s-4);
+  border: 2.5px solid var(--sky);
+  border-radius: var(--radius-sm);
+  background: var(--sky-soft);
+  color: #0c5a8f;
+  font-size: 1rem;
+}
+
+.share-field {
+  margin-top: var(--s-3);
+  font-size: 0.9375rem;
+}
+
+.share-icons {
+  margin-top: var(--s-6);
+}
+
+.share-to {
+  margin-bottom: var(--s-3);
+  color: var(--text);
+  font: 700 1.0625rem var(--font-display);
+}
+
+.share-row {
+  display: flex;
+  gap: var(--s-3);
+}
+
+.social-btn {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: var(--outline);
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: var(--pop-sm);
+}
+
+.social-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.social-line { background: #06c755; }
+.social-facebook { background: #1877f2; }
+.social-x { background: var(--ink); }
+.social-copy { background: var(--pink); }
+
+.social-line svg path,
+.social-facebook svg path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.share-actions {
+  flex-wrap: wrap;
+}
+
+.share-actions .btn-gold {
+  flex-basis: 100%;
+}
+
+.share-actions .btn-ghost {
+  flex: 1;
+  padding-left: 12px;
+  padding-right: 12px;
+}

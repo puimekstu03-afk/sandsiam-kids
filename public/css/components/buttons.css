@@ -1,0 +1,98 @@
+/* ==========================================================================
+   SANDSIAM Kids · Buttons: chunky toy buttons that press down when tapped.
+   .btn-gold is the one main action per view.
+   ========================================================================== */
+
+.btn-gold,
+.btn-ghost,
+.btn-outline,
+.btn-light,
+.btn-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 50px;
+  padding: 10px 22px;
+  border: var(--outline);
+  border-radius: 999px;
+  font: 700 1.0625rem/1.3 var(--font-display);
+  text-align: center;
+  box-shadow: var(--pop);
+  transition: transform 0.18s var(--ease-bounce), box-shadow 0.18s, background 0.18s;
+}
+
+.btn-gold:hover,
+.btn-ghost:hover,
+.btn-outline:hover,
+.btn-light:hover,
+.btn-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--ink);
+}
+
+.btn-gold:active,
+.btn-ghost:active,
+.btn-outline:active,
+.btn-light:active,
+.btn-white:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.btn-gold {
+  background: var(--sun);
+  color: var(--ink);
+}
+
+.btn-gold:hover {
+  background: #ffdc5e;
+}
+
+.btn-white {
+  background: var(--white);
+  color: var(--sky-deep);
+}
+
+.btn-white:hover {
+  background: var(--sky-soft);
+}
+
+.btn-ghost {
+  background: var(--white);
+  color: var(--ink);
+}
+
+.btn-ghost:hover {
+  background: var(--line-soft);
+}
+
+.btn-outline {
+  background: var(--pink-soft);
+  color: var(--pink-deep);
+}
+
+.btn-outline:hover {
+  background: #ffd3e4;
+}
+
+.btn-light {
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+}
+
+.btn-hero {
+  min-height: 62px;
+  padding: 12px 34px;
+  font-size: 1.3125rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-big {
+  width: 100%;
+  min-height: 66px;
+  font-size: 1.3125rem;
+}

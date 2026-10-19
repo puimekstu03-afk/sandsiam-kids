@@ -1,0 +1,71 @@
+/* ==========================================================================
+   SANDSIAM Kids · How to play: three picture cards and the teacher notes
+   ========================================================================== */
+
+.howto-steps {
+  display: grid;
+  gap: var(--s-3);
+  margin: var(--s-4) 0 var(--s-5);
+  padding: 0;
+  list-style: none;
+}
+
+.howto-steps li {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-3);
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: var(--pink-soft);
+  font: 700 1.125rem/1.45 var(--font-display);
+  box-shadow: var(--pop-sm);
+}
+
+.howto-steps li:nth-child(2) { background: var(--sky-soft); rotate: 1deg; }
+.howto-steps li:nth-child(3) { background: var(--mint-soft); rotate: -1deg; }
+
+.howto-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 88px;
+}
+
+.howto-art img {
+  max-height: 88px;
+}
+
+.howto-drag .howto-flag {
+  height: 70px;
+  animation: drag-demo 2.4s ease-in-out infinite;
+}
+
+.howto-finger {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 6px rgba(255, 210, 63, 0.4);
+  animation: drag-demo 2.4s ease-in-out infinite;
+}
+
+.teacher-notes {
+  margin-top: var(--s-5);
+  border-top: 3px dashed var(--line);
+}
+
+.teacher-notes summary {
+  padding: var(--s-3) 0;
+  font: 700 1rem var(--font-display);
+  cursor: pointer;
+}
+
+.teacher-notes p {
+  font-size: 0.9375rem;
+}

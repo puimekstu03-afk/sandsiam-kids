@@ -1,0 +1,91 @@
+/* ==========================================================================
+   SANDSIAM Kids · Step 3: decoration tabs, sticker tiles and nudge buttons
+   ========================================================================== */
+
+.tabs {
+  display: flex;
+  gap: var(--s-1);
+  margin-bottom: var(--s-4);
+  padding: 5px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.tabs button {
+  flex: 1;
+  min-height: 48px;
+  padding: 6px;
+  border-radius: 999px;
+  color: var(--muted);
+  font: 600 1rem var(--font-display);
+  transition: background 0.18s;
+}
+
+.tabs button:hover {
+  background: var(--line-soft);
+}
+
+.tabs .is-selected,
+.tabs .is-selected:hover {
+  background: var(--mint);
+  color: var(--ink);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2.5px var(--ink);
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3);
+}
+
+.item-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--s-2) var(--s-1);
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: var(--sky-soft);
+  box-shadow: var(--pop-sm);
+  cursor: grab;
+  transition: background 0.18s, transform 0.2s var(--ease-bounce);
+}
+
+.item-tile:nth-child(3n + 2) { background: var(--pink-soft); }
+.item-tile:nth-child(3n + 3) { background: var(--sun-soft); }
+
+.item-tile:hover {
+  animation: wiggle 0.5s ease-in-out;
+  transform: translateY(-3px);
+}
+
+.item-tile:active {
+  cursor: grabbing;
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.item-tile canvas {
+  width: 100%;
+  height: 80px;
+  pointer-events: none;
+}
+
+.item-tile small {
+  color: var(--ink);
+  font: 600 0.9375rem/1.4 var(--font-display);
+}
+
+.move-pad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.move-pad .btn-ghost {
+  padding: var(--s-2);
+  font-size: 1.1875rem;
+}

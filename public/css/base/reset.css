@@ -1,0 +1,134 @@
+/* ==========================================================================
+   SANDSIAM Kids · Base: box model, page background, type and focus
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+/* Every text size is in rem, so this one line sets how big the words are on each screen:
+   16px on phones and tablets, growing with a computer screen (about 19px at 1440 × 900,
+   up to 22px on big classroom screens) so children can read it from their seat.
+   It follows the height too, so a short laptop screen doesn't overflow. */
+html {
+  font-size: clamp(16px, min(8px + 0.75vw, 6px + 1.6vh), 22px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* The current region's picture shows around the panel and on phones (main.js sets background-image). */
+body {
+  overflow: hidden;
+  background: #bfe9ff linear-gradient(#a8e2ff, #d9f3ff) center / cover no-repeat fixed;
+  color: var(--ink);
+  font: 500 1.125rem/1.6 var(--font-body);
+  /* ZCOOL KuaiLe has one weight: keep it as drawn instead of a smeared fake bold. */
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Icons from the sprite in index.html (Lucide). */
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.icon {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+}
+
+/* Gold stars are filled in. */
+.icon-star {
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+/* A heading with an icon in front of its text. */
+.with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 4px solid var(--pink);
+  outline-offset: 3px;
+}
+
+/* The word SANDSIAM in candy colours, one letter at a time. */
+.wordmark span:nth-child(8n + 1),
+.splash-brand span:nth-child(8n + 1) { color: var(--pink); }
+.wordmark span:nth-child(8n + 2),
+.splash-brand span:nth-child(8n + 2) { color: var(--orange); }
+.wordmark span:nth-child(8n + 3),
+.splash-brand span:nth-child(8n + 3) { color: var(--sun-deep); }
+.wordmark span:nth-child(8n + 4),
+.splash-brand span:nth-child(8n + 4) { color: var(--mint-deep); }
+.wordmark span:nth-child(8n + 5),
+.splash-brand span:nth-child(8n + 5) { color: var(--sky-deep); }
+.wordmark span:nth-child(8n + 6),
+.splash-brand span:nth-child(8n + 6) { color: var(--grape); }
+.wordmark span:nth-child(8n + 7),
+.splash-brand span:nth-child(8n + 7) { color: var(--pink-deep); }
+.wordmark span:nth-child(8n + 8),
+.splash-brand span:nth-child(8n + 8) { color: var(--orange); }

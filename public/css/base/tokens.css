@@ -1,0 +1,91 @@
+/* ==========================================================================
+   SANDSIAM Kids · Design tokens
+
+   A bright cartoon look for children (Prathom 1–6): thick plum outlines,
+   candy colours, chunky rounded shapes and "hard" shadows that make every
+   button feel like a toy you can press.
+   ========================================================================== */
+
+:root {
+  /* Ink: outlines and text (a soft plum instead of black) */
+  --ink: #3d2c52;
+  --text: #4b3a5e;
+  --muted: #7a6a8a;
+  --line: #e6daf2;
+  --line-soft: #f4eefa;
+
+  /* Paper */
+  --paper: #fffaf0;
+  --paper-2: #fff3d9;
+  --white: #ffffff;
+
+  /* Candy colours, each with a deep and a soft partner */
+  --sky: #4cc3ff;
+  --sky-deep: #1b86cc;
+  --sky-soft: #e2f5ff;
+  --sun: #ffd23f;
+  --sun-deep: #e59a00;
+  --sun-soft: #fff5cc;
+  --pink: #ff6fa5;
+  --pink-deep: #d1336f;
+  --pink-soft: #ffe4ef;
+  --mint: #47d18c;
+  --mint-deep: #1a8f57;
+  --mint-soft: #dcf9ea;
+  --grape: #a77bff;
+  --grape-soft: #efe6ff;
+  --orange: #ff9a3c;
+  --red-soft: #ffe1e1;
+  --red-deep: #c62f2f;
+
+  /* Region colours (match REGION_COLORS in js/app/config.js) */
+  --north: #7ad36b;
+  --central: #ffc93c;
+  --isan: #ff7a7a;
+  --east: #4cc3ff;
+  --south: #b98bff;
+
+  /* Outlines and toy-like shadows */
+  --bw: 3px;
+  --outline: var(--bw) solid var(--ink);
+  --pop: 0 5px 0 var(--ink);
+  --pop-sm: 0 3px 0 var(--ink);
+  --pop-lg: 0 8px 0 var(--ink);
+
+  /* Spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+
+  /* Shape */
+  --radius-sm: 14px;
+  --radius: 20px;
+  --radius-lg: 28px;
+
+  /* Layout */
+  --panel-w: 30rem; /* grows with the text, see html in reset.css */
+  --gap: 14px; /* space around the floating panel */
+  --edge: 20px;
+  --topbar-h: 76px;
+
+  /* Layers */
+  --z-scene: 0;
+  --z-overlay: 10;
+  --z-panel: 20;
+  --z-topbar: 30;
+  --z-toast: 50;
+
+  /* Type */
+  --font-body: 'Mali', 'Noto Sans SC', system-ui, sans-serif;
+  --font-display: 'Mali', 'ZCOOL KuaiLe', 'Noto Sans SC', sans-serif;
+
+  /* A tick for CSS-only places (swatches, right quiz answers), drawn as a mask in currentColor */
+  --icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

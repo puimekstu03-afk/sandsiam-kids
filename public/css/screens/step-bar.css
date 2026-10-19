@@ -1,0 +1,105 @@
+/* ==========================================================================
+   SANDSIAM Kids · Step bar: five picture bubbles, one colour per step
+   ========================================================================== */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-1);
+  margin-top: var(--s-3);
+}
+
+.step {
+  --step: var(--pink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: var(--s-1) 0;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font: 600 0.9375rem/1.3 var(--font-display);
+  text-align: center;
+  transition: color 0.18s;
+}
+
+.step:nth-child(2) { --step: var(--orange); }
+.step:nth-child(3) { --step: var(--mint); }
+.step:nth-child(4) { --step: var(--sky); }
+.step:nth-child(5) { --step: var(--grape); }
+
+.step:hover {
+  color: var(--ink);
+}
+
+.step-number {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: var(--bw) solid #cbb8e0;
+  border-radius: 50%;
+  background: var(--white);
+  color: #b3a3c4;
+  transition: transform 0.25s var(--ease-bounce), background 0.18s;
+}
+
+.step-number svg {
+  width: 24px;
+  height: 24px;
+}
+
+.step:hover .step-number {
+  transform: translateY(-2px);
+}
+
+.step-check {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--mint);
+  color: var(--white);
+  font-style: normal;
+}
+
+.step-check .icon {
+  width: 13px;
+  height: 13px;
+  stroke-width: 4;
+}
+
+.step-name {
+  max-width: 100%;
+  text-align: center;
+}
+
+.step.is-done {
+  color: var(--text);
+}
+
+.step.is-done .step-number {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--step) 25%, #ffffff);
+  color: var(--ink);
+}
+
+.step.is-active {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.step.is-active .step-number {
+  border-color: var(--ink);
+  background: var(--step);
+  color: var(--white);
+  box-shadow: var(--pop-sm);
+  transform: scale(1.12) rotate(-4deg);
+}

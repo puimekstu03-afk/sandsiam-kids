@@ -1,0 +1,71 @@
+/* ==========================================================================
+   SANDSIAM Kids · Panel: the floating paper card beside the scene
+   (editor, celebration and pagoda field share it)
+   ========================================================================== */
+
+.panel {
+  position: fixed;
+  top: var(--gap);
+  right: var(--gap);
+  bottom: var(--gap);
+  z-index: var(--z-panel);
+  display: flex;
+  flex-direction: column;
+  width: calc(var(--panel-w) - var(--gap) * 2);
+  overflow: hidden;
+  border: 4px solid var(--ink);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle, rgba(255, 210, 63, 0.18) 0 2px, transparent 3px) 0 0 / 22px 22px,
+    var(--paper);
+  box-shadow: var(--pop-lg);
+  animation: panel-in 0.3s var(--ease-out) both;
+}
+
+.panel-head {
+  padding: var(--s-4) var(--s-5) 0;
+}
+
+.panel-head .wordmark {
+  font-size: 1.25rem;
+}
+
+.editor-head {
+  padding: var(--s-4) var(--s-5) var(--s-3);
+}
+
+.editor-head h2 {
+  font-size: 1.5625rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.editor-head h2:focus {
+  outline: none;
+}
+
+.editor-head p {
+  margin-top: var(--s-1);
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.editor-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--s-5) var(--s-5);
+}
+
+.editor-foot {
+  display: flex;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-5) var(--s-4);
+  border-top: 3px dashed var(--line);
+  background: var(--paper);
+}
+
+.editor-foot .btn-gold {
+  flex: 1;
+}

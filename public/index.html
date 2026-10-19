@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4cc3ff">
+  <meta name="description" content="Create your own Songkran sand pagoda. A little sand, a little art, a beautiful Thai tradition. ไทย · English · 中文">
+  <title>SANDSIAM · ก่อเจดีย์ทรายวันสงกรานต์</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Mali: a child's rounded handwriting with looped letters, for headings and body text alike.
+       ZCOOL KuaiLe: playful Chinese headings. Noto Sans SC: readable Chinese body text. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+
+  <!-- Styles, in order: base, layout, components, screens, responsive -->
+  <link rel="stylesheet" href="css/base/tokens.css?v=2">
+  <link rel="stylesheet" href="css/base/reset.css?v=2">
+  <link rel="stylesheet" href="css/base/motion.css?v=6">
+  <link rel="stylesheet" href="css/layout/stage.css?v=5">
+  <link rel="stylesheet" href="css/layout/topbar.css?v=3">
+  <link rel="stylesheet" href="css/layout/panel.css?v=2">
+  <link rel="stylesheet" href="css/layout/modes.css?v=2">
+  <link rel="stylesheet" href="css/components/buttons.css?v=2">
+  <link rel="stylesheet" href="css/components/forms.css?v=2">
+  <link rel="stylesheet" href="css/components/notes.css?v=2">
+  <link rel="stylesheet" href="css/components/guide.css?v=6">
+  <link rel="stylesheet" href="css/components/stickers.css?v=2">
+  <link rel="stylesheet" href="css/components/dialogs.css?v=2">
+  <link rel="stylesheet" href="css/components/toast.css?v=2">
+  <link rel="stylesheet" href="css/screens/intro.css?v=6">
+  <link rel="stylesheet" href="css/screens/step-bar.css?v=2">
+  <link rel="stylesheet" href="css/screens/step1-place.css?v=2">
+  <link rel="stylesheet" href="css/screens/step2-build.css?v=2">
+  <link rel="stylesheet" href="css/screens/step3-decorate.css?v=2">
+  <link rel="stylesheet" href="css/screens/step3-layers.css?v=5">
+  <link rel="stylesheet" href="css/screens/step4-blessing.css?v=2">
+  <link rel="stylesheet" href="css/screens/step5-share.css?v=2">
+  <link rel="stylesheet" href="css/screens/share-view.css?v=2">
+  <link rel="stylesheet" href="css/screens/field.css?v=3">
+  <link rel="stylesheet" href="css/screens/players.css?v=2">
+  <link rel="stylesheet" href="css/screens/howto.css?v=4">
+  <link rel="stylesheet" href="css/responsive/tablet.css?v=2">
+  <link rel="stylesheet" href="css/responsive/phone.css?v=8">
+</head>
+
+<body class="is-intro">
+
+  <!-- ===== Icons: Lucide (lucide.dev, ISC licence). Use with <svg class="icon"><use href="#i-name"/></svg>
+       or icon('name') in js/app/main.js. No emoji anywhere: they look different on every device. ===== -->
+  <svg class="icon-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-check" viewBox="0 0 24 24"><!-- check --><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><!-- x --><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-chevron-up" viewBox="0 0 24 24"><!-- chevron-up --><path d="m18 15-6-6-6 6"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><!-- chevron-down --><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chevrons-up" viewBox="0 0 24 24"><!-- chevrons-up --><path d="m17 11-5-5-5 5"/><path d="m17 18-5-5-5 5"/></symbol>
+    <symbol id="i-chevrons-down" viewBox="0 0 24 24"><!-- chevrons-down --><path d="m7 6 5 5 5-5"/><path d="m7 13 5 5 5-5"/></symbol>
+    <symbol id="i-grip" viewBox="0 0 24 24"><!-- grip-vertical --><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><!-- star --><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+    <symbol id="i-lightbulb" viewBox="0 0 24 24"><!-- lightbulb --><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><!-- book-open --><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
+    <symbol id="i-pointer" viewBox="0 0 24 24"><!-- mouse-pointer-click --><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><!-- hand --><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><!-- layers --><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><!-- sparkles --><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+    <symbol id="i-twinkle" viewBox="0 0 24 24"><!-- sparkle --><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><!-- circle-alert --><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><!-- house --><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><!-- circle-question-mark --><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><!-- globe --><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><!-- music --><path d="M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19"/><circle cx="18" cy="16" r="3"/><circle cx="6" cy="19" r="3"/></symbol>
+    <symbol id="i-music-off" viewBox="0 0 24 24"><!-- music + m2 2 20 20 --><path d="M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19"/><circle cx="18" cy="16" r="3"/><circle cx="6" cy="19" r="3"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><!-- volume-2 --><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24"><!-- volume-x --><path d="M11 4.702a.7.7 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.7.7 0 0 0 11 19.298z"/><path d="m16.5 14.5 5-5"/><path d="m16.5 9.5 5 5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><!-- user --><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><!-- undo-2 --><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><!-- redo-2 --><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><!-- minus --><path d="M5 12h14"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><!-- plus --><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><!-- link --><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><!-- arrow-right --><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24"><!-- map-pin --><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-castle" viewBox="0 0 24 24"><!-- castle --><path d="M10 5V3"/><path d="M14 5V3"/><path d="M15 21v-3a3 3 0 0 0-6 0v3"/><path d="M18 3v8"/><path d="M18 5H6"/><path d="M22 11H2"/><path d="M22 9v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9"/><path d="M6 3v8"/></symbol>
+    <symbol id="i-flower" viewBox="0 0 24 24"><!-- flower --><circle cx="12" cy="12" r="3"/><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5"/><path d="M12 7.5V9"/><path d="M7.5 12H9"/><path d="M16.5 12H15"/><path d="M12 16.5V15"/><path d="m8 8 1.88 1.88"/><path d="M14.12 9.88 16 8"/><path d="m8 16 1.88-1.88"/><path d="M14.12 14.12 16 16"/></symbol>
+    <symbol id="i-flip" viewBox="0 0 24 24"><!-- flip-horizontal-2 --><path d="m3 7 5 5-5 5V7"/><path d="m21 7-5 5 5 5V7"/><path d="M12 20v2"/><path d="M12 14v2"/><path d="M12 8v2"/><path d="M12 2v2"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><!-- mail --><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></symbol>
+  </svg>
+
+  <!-- ===== Scene: the cartoon backdrop, pagoda and decorations are drawn on this canvas ===== -->
+  <section class="stage" aria-label="SANDSIAM">
+    <canvas id="scene" width="1400" height="1000" tabindex="0"></canvas>
+    <div class="stage-shade" aria-hidden="true"></div>
+    <!-- Intro sky: fireworks (js/kids/intro-fx.js). Tap the scene to send one up. -->
+    <canvas id="introFx" class="intro-fx" aria-hidden="true"></canvas>
+
+    <p class="scene-note" data-t="canvasHint"></p>
+
+    <!-- Palette for the piece the child has chosen on the scene -->
+    <div id="pickPalette" class="pick-palette" hidden></div>
+
+    <!-- The guide character: a little sand pagoda that gives one tip per step -->
+    <button id="guide" class="guide" type="button" hidden>
+      <!-- The face stays put; talking frames show on top of it only once they have loaded. -->
+      <span class="guide-face">
+        <img id="guideImage" src="assets/guide/mascot-point.png" alt="">
+        <img id="guideMouth" class="guide-mouth" src="assets/guide/mascot-point.png" alt="" hidden>
+      </span>
+      <span id="guideText" class="guide-bubble"></span>
+    </button>
+
+    <div id="stickerPop" class="sticker-pop" hidden aria-live="polite">
+      <img id="stickerPopImage" alt="">
+      <p id="stickerPopText"></p>
+    </div>
+
+    <button id="delete" class="delete-btn" type="button" hidden></button>
+    <button id="flip" class="delete-btn flip-btn" type="button" hidden></button>
+
+    <!-- Layers (step 3): every piece front to back, with the pagoda as one row.
+         On phones app.js moves this into the panel, above the footer. -->
+    <section id="layers" class="layers" hidden aria-labelledby="layersTitle">
+      <div class="layers-head">
+        <h2 class="layers-title"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg><span id="layersTitle"></span></h2>
+        <button id="layersToggle" class="layers-toggle" type="button" aria-controls="layersBody">
+          <svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>
+        </button>
+      </div>
+      <div id="layersBody" class="layers-body">
+        <p id="layersHint" class="layers-hint"></p>
+        <p class="layers-end"><svg class="icon" aria-hidden="true"><use href="#i-chevrons-up"/></svg><span data-t="layersFront"></span></p>
+        <ol id="layersList" class="layers-list"></ol>
+        <p class="layers-end"><svg class="icon" aria-hidden="true"><use href="#i-chevrons-down"/></svg><span data-t="layersBack"></span></p>
+        <div id="layerControls" class="layer-controls" hidden></div>
+      </div>
+    </section>
+
+    <div class="stage-tools" role="toolbar">
+      <button id="undo" class="tool-btn" type="button">
+        <svg aria-hidden="true"><use href="#i-undo"/></svg>
+        <span class="tool-label" data-t="undoShort"></span>
+      </button>
+      <button id="redo" class="tool-btn" type="button">
+        <svg aria-hidden="true"><use href="#i-redo"/></svg>
+        <span class="tool-label" data-t="redoShort"></span>
+      </button>
+      <!-- Zoom is kept for keyboard users but hidden: children don't need it. -->
+      <i class="tool-sep" hidden></i>
+      <button id="zoomOut" class="tool-btn" type="button" hidden>
+        <svg aria-hidden="true"><use href="#i-minus"/></svg>
+      </button>
+      <button id="zoomReset" class="tool-btn tool-zoom" type="button" hidden>100%</button>
+      <button id="zoomIn" class="tool-btn" type="button" hidden>
+        <svg aria-hidden="true"><use href="#i-plus"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== Top bar over the scene ===== -->
+  <header class="topbar">
+    <div class="topbar-icons">
+      <button id="home" class="icon-btn" type="button">
+        <svg aria-hidden="true"><use href="#i-home"/></svg>
+      </button>
+      <button id="help" class="icon-btn" type="button">
+        <svg aria-hidden="true"><use href="#i-help"/></svg>
+      </button>
+      <label class="icon-btn lang-btn">
+        <svg aria-hidden="true"><use href="#i-globe"/></svg>
+        <select id="language">
+          <option value="th">ไทย</option>
+          <option value="en">EN</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+    </div>
+    <div class="topbar-right">
+      <button id="music" class="icon-btn" type="button">
+        <svg class="icon-music-on" aria-hidden="true"><use href="#i-music"/></svg>
+        <svg class="icon-music-off" aria-hidden="true"><use href="#i-music-off"/></svg>
+      </button>
+      <button id="sound" class="icon-btn" type="button">
+        <svg class="icon-sound-on" aria-hidden="true"><use href="#i-sound"/></svg>
+        <svg class="icon-sound-off" aria-hidden="true"><use href="#i-sound-off"/></svg>
+      </button>
+      <button id="player" class="icon-btn player-btn" type="button">
+        <svg aria-hidden="true"><use href="#i-user"/></svg>
+        <span id="playerName"></span>
+      </button>
+      <a class="wordmark wordmark-light" href="./" aria-label="SANDSIAM"><span>S</span><span>A</span><span>N</span><span>D</span><span>S</span><span>I</span><span>A</span><span>M</span></a>
+    </div>
+  </header>
+
+  <!-- ===== Intro ===== -->
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="splash">
+      <img class="splash-flower splash-flower-a" src="assets/ornaments/marigold.webp" alt="">
+      <img class="splash-flower splash-flower-b" src="assets/ornaments/plumeria.webp" alt="">
+      <img class="splash-flower splash-flower-c" src="assets/ornaments/lotus.webp" alt="">
+      <svg class="splash-sparkle splash-sparkle-a" aria-hidden="true"><use href="#i-twinkle"/></svg>
+      <svg class="splash-sparkle splash-sparkle-b" aria-hidden="true"><use href="#i-twinkle"/></svg>
+      <svg class="splash-sparkle splash-sparkle-c" aria-hidden="true"><use href="#i-twinkle"/></svg>
+      <p class="splash-brand" aria-hidden="true"><span>S</span><span>A</span><span>N</span><span>D</span><span>S</span><span>I</span><span>A</span><span>M</span></p>
+      <h1 id="heroTitle" class="hero-title">
+        <span data-t="heroTitle"></span>
+        <span class="hero-title-accent" data-t="heroTitle2"></span>
+      </h1>
+    </div>
+    <p class="counter" aria-live="polite">
+      <svg class="icon icon-star" aria-hidden="true"><use href="#i-star"/></svg>
+      <span id="counterBefore"></span>
+      <b id="counterValue">0</b>
+      <span id="counterAfter"></span>
+    </p>
+  </section>
+
+  <div class="intro-bottom">
+    <!-- Five regional traditions; the intro photo cycles through them -->
+    <nav class="regions" aria-label="Regions">
+      <div id="regions" class="regions-list"></div>
+      <p id="regionCaption" class="regions-caption"></p>
+    </nav>
+    <div class="hero-actions">
+      <button id="start" class="btn-gold btn-hero" type="button" data-t="startNew"></button>
+      <button id="openField" class="btn-white btn-hero" type="button" data-t="viewField"></button>
+    </div>
+    <button id="resume" class="resume-link" type="button" hidden></button>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 SANDSIAM · <span data-t="footer"></span></span>
+  </footer>
+
+  <!-- ===== Editor panel (five steps) ===== -->
+  <aside class="panel editor" aria-labelledby="panelTitle">
+    <div class="panel-head">
+      <a class="wordmark" href="./" aria-label="SANDSIAM"><span>S</span><span>A</span><span>N</span><span>D</span><span>S</span><span>I</span><span>A</span><span>M</span></a>
+      <nav id="steps" class="steps" aria-label="Progress"></nav>
+    </div>
+    <div class="editor-head">
+      <h2 id="panelTitle"></h2>
+      <p id="panelDesc"></p>
+    </div>
+    <div id="panel" class="editor-body"></div>
+    <div class="editor-foot">
+      <button id="back" class="btn-ghost" type="button" data-t="back"></button>
+      <button id="next" class="btn-gold" type="button"></button>
+    </div>
+  </aside>
+
+  <!-- ===== Celebration & share panel ===== -->
+  <section id="shareView" class="panel share-view" aria-labelledby="shareTitle">
+    <div class="panel-head">
+      <a class="wordmark" href="./" aria-label="SANDSIAM"><span>S</span><span>A</span><span>N</span><span>D</span><span>S</span><span>I</span><span>A</span><span>M</span></a>
+    </div>
+    <div class="share-body">
+      <p id="shareChip" class="share-place"></p>
+      <h2 id="shareTitle"></h2>
+      <p id="shareBy" class="share-by"></p>
+      <figure class="share-wish">
+        <blockquote id="shareWish"></blockquote>
+        <figcaption id="shareName"></figcaption>
+      </figure>
+
+      <p id="shareKids" class="share-kids"></p>
+      <div id="shareIcons" class="share-icons" hidden>
+        <p class="share-to" data-t="shareTo"></p>
+        <div class="share-row">
+          <a id="shareLine" class="social-btn social-line" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.2 3 11.1c0 3.5 3.1 6.4 7.4 7l-.5 2.4c-.1.4.3.7.7.5 2.7-1.5 6.9-4.2 8.6-6.6.9-1.1 1.3-2.2 1.3-3.3C20.5 7.2 17 4 12 4Z"/></svg>
+          </a>
+          <a id="shareFacebook" class="social-btn social-facebook" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 8H17V4.5h-2.5C12 4.5 10.5 6 10.5 8.5V10H8v3.5h2.5V21H14v-7.5h2.6L17 10h-3V8.6c0-.4.2-.6.5-.6Z"/></svg>
+          </a>
+          <a id="shareX" class="social-btn social-x" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4l14 16M19 4 5 20"/></svg>
+          </a>
+          <button id="shareCopy" class="social-btn social-copy" type="button">
+            <svg aria-hidden="true"><use href="#i-link"/></svg>
+          </button>
+        </div>
+        <input id="shareField" class="input share-field" type="text" readonly hidden aria-label="Link">
+      </div>
+    </div>
+    <div class="editor-foot share-actions">
+      <button id="shareMain" class="btn-gold" type="button"></button>
+      <button id="shareBack" class="btn-ghost" type="button"></button>
+      <button id="shareToField" class="btn-ghost" type="button" data-t="viewField"></button>
+      <button id="shareReplay" class="btn-ghost" type="button"></button>
+    </div>
+  </section>
+
+  <!-- ===== Pagoda field ===== -->
+  <section id="fieldView" class="panel field-view" aria-labelledby="fieldTitle">
+    <div class="panel-head">
+      <a class="wordmark" href="./" aria-label="SANDSIAM"><span>S</span><span>A</span><span>N</span><span>D</span><span>S</span><span>I</span><span>A</span><span>M</span></a>
+    </div>
+    <div class="field-body">
+      <h2 id="fieldTitle" data-t="fieldTitle"></h2>
+      <p class="field-desc" data-t="fieldDesc"></p>
+      <p class="field-total"><svg class="icon icon-star" aria-hidden="true"><use href="#i-star"/></svg><span id="fieldTotal"></span></p>
+      <div id="fieldRegions" class="field-regions" role="tablist"></div>
+      <nav id="fieldPages" class="field-pages" hidden></nav>
+      <div id="fieldCard" class="field-card" aria-live="polite"></div>
+      <div id="fieldReviews" class="field-reviews" hidden></div>
+      <p id="fieldNote" class="fine-print"></p>
+    </div>
+    <div class="editor-foot">
+      <button id="fieldBuild" class="btn-gold" type="button" data-t="startNew"></button>
+      <button id="fieldHome" class="btn-ghost" type="button" data-t="home"></button>
+    </div>
+  </section>
+
+  <div id="toast" role="status"></div>
+
+  <!-- ===== How to play ===== -->
+  <dialog id="helpDialog" class="modal howto">
+    <button class="modal-close" type="button">
+      <svg aria-hidden="true"><use href="#i-x"/></svg>
+    </button>
+    <p class="modal-kicker">SANDSIAM</p>
+    <h2 data-t="howToTitle"></h2>
+    <ol class="howto-steps">
+      <li>
+        <span class="howto-art"><img src="assets/guide/mascot-point.png" alt=""></span>
+        <span data-howto="0"></span>
+      </li>
+      <li>
+        <span class="howto-art howto-drag" aria-hidden="true">
+          <img class="howto-flag" src="assets/ornaments/flag.webp" alt="">
+          <span class="howto-finger"></span>
+        </span>
+        <span data-howto="1"></span>
+      </li>
+      <li>
+        <span class="howto-art"><img src="assets/guide/mascot-cheer.png" alt=""></span>
+        <span data-howto="2"></span>
+      </li>
+    </ol>
+    <button class="btn-gold btn-block btn-big close-help" type="button" data-t="gotIt"></button>
+    <details class="teacher-notes">
+      <summary data-t="teacherTitle"></summary>
+      <p data-t="teacherText"></p>
+      <p class="modal-note" data-t="tradition"></p>
+      <button id="teacherCopy" class="btn-ghost btn-block" type="button" data-t="teacherShare"></button>
+      <input id="teacherLink" class="input share-field" type="text" readonly hidden aria-label="Link">
+    </details>
+  </dialog>
+
+  <!-- ===== Who's playing? (shared classroom computers) ===== -->
+  <dialog id="playerDialog" class="modal players">
+    <h2 class="with-icon"><svg class="icon" aria-hidden="true"><use href="#i-hand"/></svg><span id="playerTitle"></span></h2>
+    <div id="playerList" class="player-list"></div>
+    <form id="newPlayerForm" class="player-new">
+      <label id="newPlayerLabel" for="newPlayerName"></label>
+      <div class="player-new-row">
+        <input id="newPlayerName" class="input" type="text" maxlength="20" autocomplete="off">
+        <button id="newPlayerGo" class="btn-gold" type="submit"></button>
+      </div>
+    </form>
+    <p id="playerNote" class="fine-print"></p>
+  </dialog>
+
+  <!-- Scripts are plain (no build step) and must load in this order. -->
+  <!-- Data -->
+  <script src="js/data/i18n.js?v=9"></script>
+  <script src="js/data/map-data.js"></script>
+  <!-- Scene drawing (Canvas 2D, no DOM) -->
+  <script src="js/scene/core.js"></script>
+  <script src="js/scene/assets.js"></script>
+  <!-- Cartoon decorations: the catalogue, then loading and recolouring their pictures -->
+  <script src="js/scene/ornaments/catalog.js"></script>
+  <script src="js/scene/ornaments/pictures.js"></script>
+  <script src="js/scene/backgrounds.js"></script>
+  <script src="js/scene/decorations.js?v=2"></script>
+  <script src="js/scene/pagoda.js"></script>
+  <script src="js/scene/effects.js"></script>
+  <script src="js/scene/render.js"></script>
+  <script src="js/scene/field.js?v=2"></script>
+  <!-- Helpers for young players -->
+  <script src="js/kids/players.js"></script>
+  <script src="js/kids/sound.js?v=2"></script>
+  <script src="js/kids/music.js?v=3"></script>
+  <script src="js/kids/intro-fx.js?v=2"></script>
+  <script src="js/kids/polite.js"></script>
+  <script src="js/kids/stickers.js"></script>
+  <!-- Pagoda field storage -->
+  <script src="js/store/local-store.js?v=2"></script>
+  <script src="js/store/shared-store.js?v=2"></script>
+  <script src="js/store/supabase-store.js?v=4"></script>
+  <script src="js/store/field-store.js?v=5"></script>
+  <!-- The app -->
+  <script src="js/app/config.js"></script>
+  <script src="js/app/state.js?v=2"></script>
+  <script src="js/app/layers.js"></script>
+  <script src="js/app/main.js?v=13"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+/* ==========================================================================
+   SANDSIAM Kids · Reward stickers: the pop-up and the sticker shelf
+   ========================================================================== */
+
+/* A white edge around photo cut-outs so they look like stickers. */
+.sticker-pop img,
+.sticker img,
+.howto-art img,
+.splash-flower {
+  filter:
+    drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+    drop-shadow(0 4px 0 rgba(61, 44, 82, 0.3));
+}
+
+.sticker-pop {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-3);
+  pointer-events: none;
+}
+
+.sticker-pop img {
+  width: 160px;
+  height: 160px;
+  padding: var(--s-4);
+  border: 5px solid var(--ink);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe6 40%, #ffe27a);
+  object-fit: contain;
+  box-shadow: 0 0 0 8px var(--white), var(--pop-lg);
+}
+
+.sticker-pop p {
+  padding: var(--s-2) var(--s-5);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--white);
+  font: 700 1.4375rem var(--font-display);
+  box-shadow: var(--pop);
+}
+
+.sticker-pop.is-showing {
+  animation: sticker-pop 1.8s var(--ease-out) both;
+}
+
+.sticker-shelf {
+  margin-top: var(--s-5);
+}
+
+.sticker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.sticker {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: var(--bw) dashed #cbb8e0;
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.sticker img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  opacity: 0.18;
+  filter: grayscale(1);
+}
+
+.sticker.is-earned {
+  border: var(--outline);
+  background: radial-gradient(circle, #fffbe6 40%, #ffe27a);
+  box-shadow: var(--pop-sm);
+  animation: wiggle 2.6s ease-in-out infinite;
+}
+
+.sticker.is-earned:nth-child(2n) {
+  animation-delay: -1.3s;
+}
+
+.sticker.is-earned img {
+  opacity: 1;
+  filter:
+    drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff);
+}

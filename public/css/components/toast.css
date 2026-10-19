@@ -1,0 +1,37 @@
+/* ==========================================================================
+   SANDSIAM Kids · Toast: a short message that pops up and goes away
+   ========================================================================== */
+
+#toast {
+  position: fixed;
+  bottom: var(--s-6);
+  left: 50%;
+  z-index: var(--z-toast);
+  max-width: min(90vw, 34rem);
+  padding: var(--s-3) var(--s-5);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font: 600 1.0625rem var(--font-display);
+  text-align: center;
+  box-shadow: var(--pop);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px) scale(0.9);
+  transition: opacity 0.2s, transform 0.3s var(--ease-bounce);
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+/* In the editor the toast sits at the top of the scene, under the colour palette. */
+.is-editor #toast,
+.is-share #toast,
+.is-field #toast {
+  top: calc(var(--topbar-h) + 80px);
+  bottom: auto;
+  left: calc((100% - var(--panel-w)) / 2);
+}

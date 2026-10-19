@@ -1,0 +1,400 @@
+<!doctype html>
+<!--
+  SANDSIAM · Single flower heads, drawn in SVG (no stems, no leaves).
+  Soft gradient shading and layered petals, no outlines.
+
+  Open with ?f=<key> to show one flower on a transparent page (render-flowers.sh
+  screenshots each one), or with no query to see them all on a sand-coloured sheet.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: transparent; }
+  body.sheet { background: #f3e3c3; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; }
+  body.sheet img { display: block; }
+  body.one svg { display: block; width: 400px; height: 400px; }
+</style>
+</head>
+<body>
+<script>
+'use strict';
+
+/* ---------- helpers ---------- */
+
+function rng(seed) {
+  return () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+}
+const f = (n) => Math.round(n * 100) / 100;
+const lerp = (a, b, t) => a + (b - a) * t;
+function mix(c1, c2, t) {
+  const p = (c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+  const a = p(c1);
+  const b = p(c2);
+  return '#' + a.map((v, i) => Math.round(lerp(v, b[i], t)).toString(16).padStart(2, '0')).join('');
+}
+
+let uid = 0;
+/** A gradient along a petal, from its base (0,0) to its tip (0,-len). */
+function petalGrad(defs, len, stops) {
+  const id = 'g' + uid++;
+  defs.push(`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${f(-len)}">` +
+    stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a !== undefined ? ` stop-opacity="${a}"` : ''}/>`).join('') +
+    '</linearGradient>');
+  return `url(#${id})`;
+}
+function radialGrad(defs, stops, cx = 0.5, cy = 0.5, r = 0.5, fx = cx, fy = cy) {
+  const id = 'g' + uid++;
+  defs.push(`<radialGradient id="${id}" cx="${cx}" cy="${cy}" r="${r}" fx="${fx}" fy="${fy}">` +
+    stops.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a !== undefined ? ` stop-opacity="${a}"` : ''}/>`).join('') +
+    '</radialGradient>');
+  return `url(#${id})`;
+}
+
+/* Petal outlines, base at (0,0), tip at (0,-L), half-width W. */
+const round = (L, W) =>
+  `M0,0 C${f(W * 0.95)},${f(-L * 0.12)} ${f(W * 1.05)},${f(-L * 0.9)} 0,${f(-L)} C${f(-W * 1.05)},${f(-L * 0.9)} ${f(-W * 0.95)},${f(-L * 0.12)} 0,0Z`;
+const pointed = (L, W) =>
+  `M0,0 C${f(W * 1.1)},${f(-L * 0.25)} ${f(W * 0.7)},${f(-L * 0.78)} 0,${f(-L)} C${f(-W * 0.7)},${f(-L * 0.78)} ${f(-W * 1.1)},${f(-L * 0.25)} 0,0Z`;
+const oval = (L, W) =>
+  `M0,0 C${f(W * 1.3)},${f(-L * 0.05)} ${f(W * 1.2)},${f(-L * 1.0)} 0,${f(-L)} C${f(-W * 1.2)},${f(-L * 1.0)} ${f(-W * 1.3)},${f(-L * 0.05)} 0,0Z`;
+/** A broad petal whose top edge is ruffled into `bumps` scallops. */
+function ruffled(L, W, bumps, rand, depth = 0.1) {
+  const top = L * 0.78;
+  let d = `M0,0 C${f(W * 0.45)},${f(-L * 0.15)} ${f(W)},${f(-L * 0.45)} ${f(W * 0.95)},${f(-top)}`;
+  const pts = [];
+  for (let i = 0; i <= bumps; i++) {
+    const t = (i / bumps) * Math.PI;
+    pts.push([W * 0.95 * Math.cos(t), -top - (L - top) * Math.sin(t)]);
+  }
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1];
+    const [x1, y1] = pts[i];
+    const mx = (x0 + x1) / 2;
+    const my = (y0 + y1) / 2;
+    const k = 1 + depth * (0.6 + 0.8 * rand());
+    const cy = -L * 0.55;
+    d += ` Q${f(mx * k)},${f(cy + (my - cy) * k)} ${f(x1)},${f(y1)}`;
+  }
+  d += ` C${f(-W)},${f(-L * 0.45)} ${f(-W * 0.45)},${f(-L * 0.15)} 0,0Z`;
+  return d;
+}
+
+const place = (x, y, deg, s = 1) => `translate(${f(x)} ${f(y)}) rotate(${f(deg)}) scale(${f(s)})`;
+
+/* ---------- the flowers ---------- */
+
+const FLOWERS = {
+  marigold(defs) {
+    const r = rng(7);
+    let out = '';
+    const layers = 6;
+    for (let k = 0; k < layers; k++) {
+      const t = k / (layers - 1);
+      const L = lerp(170, 48, t);
+      const n = Math.round(lerp(17, 8, t));
+      const fill = petalGrad(defs, L, [
+        [0, mix('#b8390a', '#d9480f', t)],
+        [0.5, mix('#f76707', '#fd7e14', t)],
+        [0.85, mix('#ff9f1c', '#ffb02e', t)],
+        [1, mix('#ffc04d', '#ffd43b', t)],
+      ]);
+      const off = r() * 360;
+      for (let i = 0; i < n; i++) {
+        const a = off + (i * 360) / n + (r() - 0.5) * 14;
+        const s = 0.86 + r() * 0.2;
+        out += `<path filter="url(#deep)" fill="${fill}" transform="${place(0, 0, a, s)}" d="${ruffled(L, L * 0.4, 5, r, 0.22)}"/>`;
+      }
+    }
+    // Small stamens in the middle.
+    for (let i = 0; i < 26; i++) {
+      const a = r() * Math.PI * 2;
+      const d = Math.sqrt(r()) * 14;
+      out += `<circle cx="${f(Math.cos(a) * d)}" cy="${f(Math.sin(a) * d)}" r="${f(2.4 + r() * 1.5)}" fill="${r() < 0.5 ? '#ffd43b' : '#f59f00'}"/>`;
+    }
+    return out;
+  },
+
+  lotus(defs) {
+    const B = [0, 112]; // where every petal grows from
+    const back = petalGrad(defs, 175, [[0, '#fff0f5'], [0.45, '#fbb6ce'], [1, '#e64980']]);
+    const mid = petalGrad(defs, 160, [[0, '#fff5f8'], [0.5, '#fcc2d7'], [1, '#ec5f97']]);
+    const front = petalGrad(defs, 140, [[0, '#ffffff'], [0.5, '#ffd1e1'], [1, '#f06595']]);
+    let out = '';
+    for (const a of [-82, -58, -32, 32, 58, 82]) {
+      out += `<path filter="url(#soft)" fill="${back}" transform="${place(B[0], B[1], a)}" d="${pointed(175, 50)}"/>`;
+    }
+    out += `<path filter="url(#soft)" fill="${back}" transform="${place(B[0], B[1], 0)}" d="${pointed(190, 52)}"/>`;
+    // Seed pod with a ring of stamens.
+    const pod = radialGrad(defs, [[0, '#fff3bf'], [0.6, '#fcc419'], [1, '#e67700']], 0.45, 0.35, 0.6);
+    out += `<ellipse cx="0" cy="-8" rx="46" ry="17" fill="${pod}"/>`;
+    for (let i = 0; i < 7; i++) out += `<circle cx="${-30 + i * 10}" cy="${-9 + (i % 2) * 4}" r="2.6" fill="#c77700"/>`;
+    for (const a of [-45, -18, 18, 45]) {
+      out += `<path filter="url(#soft)" fill="${mid}" transform="${place(B[0], B[1], a)}" d="${pointed(160, 50)}"/>`;
+    }
+    for (const a of [-26, 26]) {
+      out += `<path filter="url(#soft)" fill="${front}" transform="${place(B[0], B[1] + 4, a)}" d="${pointed(140, 46)}"/>`;
+    }
+    out += `<path filter="url(#soft)" fill="${front}" transform="${place(B[0], B[1] + 6, 0)}" d="${pointed(118, 44)}"/>`;
+    return out;
+  },
+
+  rose(defs) {
+    const r = rng(11);
+    let out = '';
+    const rings = [
+      [5, 168, 0.78], [5, 140, 0.74], [5, 112, 0.7], [4, 84, 0.68], [4, 60, 0.66], [3, 40, 0.7],
+    ];
+    rings.forEach(([n, L, w], k) => {
+      const t = k / (rings.length - 1);
+      const fill = petalGrad(defs, L, [
+        [0, mix('#6b0010', '#4a000a', t)],
+        [0.55, mix('#c9182b', '#9c0f22', t)],
+        [0.92, mix('#ef3b4d', '#d42035', t)],
+        [1, mix('#ff6b78', '#f03e50', t)],
+      ]);
+      const off = k * 37 + r() * 20;
+      for (let i = 0; i < n; i++) {
+        const a = off + (i * 360) / n + (r() - 0.5) * 12;
+        out += `<path filter="url(#soft)" fill="${fill}" transform="${place(0, 0, a)}" d="${round(L, L * w)}"/>`;
+      }
+    });
+    // The tight bud in the middle.
+    out += `<circle r="22" fill="${radialGrad(defs, [[0, '#7a0614'], [1, '#b3142a']], 0.4, 0.4)}"/>`;
+    out += '<path d="M-14,4 C-16,-12 2,-20 12,-10 C20,0 8,14 -4,10 C-12,6 -8,-6 2,-6 C8,-4 8,4 2,4" fill="none" stroke="#4a0008" stroke-width="3" stroke-linecap="round" opacity="0.8"/>';
+    return out;
+  },
+
+  jasmine(defs) {
+    const r = rng(5);
+    let out = '';
+    const rings = [[8, 165, 0.42], [8, 132, 0.44], [7, 100, 0.46], [6, 70, 0.5], [5, 44, 0.55]];
+    rings.forEach(([n, L, w], k) => {
+      const t = k / (rings.length - 1);
+      const fill = petalGrad(defs, L, [
+        [0, mix('#cfd8e3', '#d8dee8', t)],
+        [0.45, '#f4f6f9'],
+        [1, '#ffffff'],
+      ]);
+      const off = k * 23 + r() * 15;
+      for (let i = 0; i < n; i++) {
+        const a = off + (i * 360) / n + (r() - 0.5) * 10;
+        out += `<path filter="url(#pale)" fill="${fill}" stroke="#dde3ea" stroke-width="1.2" transform="${place(0, 0, a, 0.94 + r() * 0.1)}" d="${oval(L, L * w * 0.8)}"/>`;
+      }
+    });
+    // Pale yellow stamens.
+    for (let i = 0; i < 18; i++) {
+      const a = (i / 18) * Math.PI * 2 + r() * 0.3;
+      const d = 6 + r() * 10;
+      const x = Math.cos(a) * d;
+      const y = Math.sin(a) * d;
+      out += `<line x1="0" y1="0" x2="${f(x)}" y2="${f(y)}" stroke="#e9d8a6" stroke-width="1.6"/><circle cx="${f(x)}" cy="${f(y)}" r="2.6" fill="#f2c94c"/>`;
+    }
+    return out;
+  },
+
+  sunflower(defs) {
+    const r = rng(3);
+    let out = '';
+    const outer = petalGrad(defs, 110, [[0, '#e67700'], [0.35, '#fab005'], [1, '#ffe066']]);
+    const inner = petalGrad(defs, 100, [[0, '#d9480f'], [0.4, '#f59f00'], [1, '#ffd43b']]);
+    [[outer, 0, 112], [inner, 360 / 42, 100]].forEach(([fill, off, L]) => {
+      for (let i = 0; i < 21; i++) {
+        const a = off + (i * 360) / 21 + (r() - 0.5) * 5;
+        const rad = ((a - 90) * Math.PI) / 180;
+        out += `<path filter="url(#soft)" fill="${fill}" transform="${place(Math.cos(rad) * 62, Math.sin(rad) * 62, a, 0.92 + r() * 0.12)}" d="${pointed(L, 21)}"/>`;
+      }
+    });
+    out += `<circle r="80" filter="url(#soft)" fill="${radialGrad(defs, [[0, '#5c3a1e'], [0.7, '#3d2410'], [0.9, '#5e3a12'], [1, '#8a5a1c']], 0.45, 0.42)}"/>`;
+    // Seeds in a sunflower spiral.
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 1; i < 260; i++) {
+      const d = 4.6 * Math.sqrt(i);
+      if (d > 74) break;
+      const a = i * golden;
+      const light = 0.5 + 0.5 * Math.cos(a - 3.6) * (d / 74);
+      out += `<circle cx="${f(Math.cos(a) * d)}" cy="${f(Math.sin(a) * d)}" r="${f(1.6 + d / 40)}" fill="${mix('#24140a', '#a0692a', light * 0.7)}"/>`;
+    }
+    return out;
+  },
+
+  hibiscus(defs) {
+    const r = rng(9);
+    let out = '';
+    const fill = petalGrad(defs, 172, [[0, '#b0071f'], [0.45, '#e0182d'], [1, '#ff5a48']]);
+    for (let i = 0; i < 5; i++) {
+      const a = i * 72 - 10;
+      out += `<g transform="${place(0, 0, a)}"><path filter="url(#deep)" fill="${fill}" transform="translate(10 0) rotate(8)" d="${ruffled(172, 98, 6, r, 0.08)}"/>`;
+      for (let v = -3; v <= 3; v++) {
+        out += `<path d="M10,-8 Q${18 + v * 14},-80 ${f(10 + v * 26)},-${f(150 - Math.abs(v) * 8)}" fill="none" stroke="#8a0718" stroke-width="1.4" opacity="0.35"/>`;
+      }
+      out += '</g>';
+    }
+    // A deep crimson eye where the petals meet.
+    out += `<circle r="70" fill="${radialGrad(defs, [[0, '#4a000b', 0.95], [0.45, '#7a0012', 0.75], [1, '#a3001a', 0]])}"/>`;
+    // The long stamen column with pollen and red tips.
+    out += `<path d="M0,0 C30,-40 60,-90 98,-128" fill="none" stroke="${petalGrad(defs, 150, [[0, '#f08c00'], [1, '#ffe066']])}" stroke-width="7" stroke-linecap="round"/>`;
+    for (let i = 0; i < 14; i++) {
+      const t = 0.55 + r() * 0.33;
+      const x = 98 * t + (r() - 0.5) * 16;
+      const y = -128 * t + (r() - 0.5) * 16;
+      out += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(2.8 + r() * 1.6)}" fill="${r() < 0.5 ? '#ffd43b' : '#fab005'}"/>`;
+    }
+    for (const [x, y] of [[92, -142], [106, -140], [114, -128], [110, -116], [98, -146]]) {
+      out += `<circle cx="${x}" cy="${y}" r="5.5" fill="${radialGrad(defs, [[0, '#ff6b6b'], [1, '#a30015']], 0.35, 0.35)}"/>`;
+    }
+    return out;
+  },
+
+  plumeria(defs) {
+    let out = '';
+    const fill = petalGrad(defs, 170, [[0, '#f59f00'], [0.22, '#ffd43b'], [0.48, '#fff3bf'], [0.62, '#fffdf5'], [1, '#ffffff']]);
+    for (let i = 0; i < 5; i++) {
+      out += `<g transform="rotate(${i * 72 + 8})"><path filter="url(#pale)" fill="${fill}" stroke="#eadfca" stroke-width="1.3" transform="translate(14 0) rotate(16)" d="${oval(158, 70)}"/></g>`;
+    }
+    out += `<circle r="16" fill="${radialGrad(defs, [[0, '#e67700'], [1, '#fab005', 0]])}"/>`;
+    return out;
+  },
+
+  orchid(defs) {
+    let out = '';
+    const sepal = petalGrad(defs, 150, [[0, '#7b1fa2'], [0.5, '#ab47bc'], [1, '#d18be3']]);
+    const petal = petalGrad(defs, 150, [[0, '#6a1b9a'], [0.35, '#9c3fc0'], [1, '#e1a6ef']]);
+    const veins = (L, n) => {
+      let v = '';
+      for (let i = -n; i <= n; i++) {
+        v += `<path d="M0,-6 Q${i * 9},${f(-L * 0.5)} ${i * 14},${f(-L * 0.9 + Math.abs(i) * 10)}" fill="none" stroke="#5e1180" stroke-width="1.2" opacity="0.3"/>`;
+      }
+      return v;
+    };
+    for (const a of [148, -148]) out += `<g transform="rotate(${a})"><path filter="url(#soft)" fill="${sepal}" d="${oval(142, 46)}"/>${veins(142, 2)}</g>`;
+    out += `<g transform="translate(0 -6)"><path filter="url(#soft)" fill="${sepal}" d="${oval(150, 50)}"/>${veins(150, 2)}</g>`;
+    for (const a of [-72, 72]) out += `<g transform="rotate(${a}) translate(0 4)"><path filter="url(#soft)" fill="${petal}" d="${round(160, 108)}"/>${veins(160, 4)}</g>`;
+    // The lip: two curled side lobes and a hanging front lobe.
+    const lip = radialGrad(defs, [[0, '#ff4fa3'], [0.6, '#c2185b'], [1, '#7a0a3c']], 0.5, 0.3, 0.7);
+    out += `<path filter="url(#soft)" fill="${lip}" d="M-34,8 C-58,10 -56,46 -30,48 C-18,49 -10,40 -8,30 Z M34,8 C58,10 56,46 30,48 C18,49 10,40 8,30 Z"/>`;
+    out += `<path filter="url(#soft)" fill="${lip}" d="M0,20 C-34,24 -46,62 -22,80 C-12,88 12,88 22,80 C46,62 34,24 0,20Z"/>`;
+    out += `<path d="M-13,30 C-7,23 7,23 13,30 C8,40 -8,40 -13,30Z" fill="${radialGrad(defs, [[0, '#fff3bf'], [1, '#fab005']])}"/>`;
+    // The column, white with a pale highlight.
+    out += `<ellipse cx="0" cy="6" rx="10" ry="13" fill="${radialGrad(defs, [[0, '#ffffff'], [0.7, '#f3e5f5'], [1, '#ce93d8']], 0.4, 0.3)}"/>`;
+    return out;
+  },
+
+  /** ดอกเข็ม: a dome of small four-petalled florets. */
+  ixora(defs) {
+    const r = rng(17);
+    const R = 120;
+    let out = `<circle r="${R * 0.9}" fill="${radialGrad(defs, [[0, '#f03e3e'], [1, '#a61e1e']], 0.4, 0.35)}"/>`;
+    const pts = [];
+    const N = 96;
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < N; i++) {
+      const y = 1 - (i / (N - 1)) * 2;
+      const rr = Math.sqrt(1 - y * y);
+      const a = i * golden;
+      const z = Math.sin(a) * rr;
+      if (z < -0.1) continue;
+      pts.push([Math.cos(a) * rr, y, z]);
+    }
+    pts.sort((p, q) => p[2] - q[2]);
+    const petal = (lit) => petalGrad(defs, 30, [[0, mix('#a61e1e', '#e8590c', lit)], [1, mix('#e03131', '#ff8c42', lit)]]);
+    const fills = [0, 0.25, 0.5, 0.75, 1].map(petal);
+    for (const [x, y, z] of pts) {
+      const lit = Math.max(0, -0.45 * x - 0.55 * y + 0.7 * z);
+      const fill = fills[Math.min(4, Math.round(lit * 4))];
+      const side = Math.sqrt(Math.max(0, 1 - z * z));
+      const squash = 1 - side * 0.45;
+      const tilt = (Math.atan2(y, x) * 180) / Math.PI;
+      const spin = r() * 90;
+      out += `<g transform="translate(${f(x * R)} ${f(y * R)}) rotate(${f(tilt)}) scale(${f(squash)} 1) rotate(${f(spin)})">`;
+      for (let k = 0; k < 4; k++) out += `<path filter="url(#soft)" fill="${fill}" transform="rotate(${k * 90})" d="${round(30, 12)}"/>`;
+      out += '<circle r="3.2" fill="#ffd8a8"/></g>';
+    }
+    return out;
+  },
+
+  /** ดอกดาวกระจาย: eight broad petals with notched tips round a yellow middle. */
+  cosmos(defs) {
+    const r = rng(19);
+    let out = '';
+    const fill = petalGrad(defs, 160, [[0, '#c2255c'], [0.3, '#e64980'], [0.75, '#f783ac'], [1, '#ffc9de']]);
+    for (let i = 0; i < 8; i++) {
+      const a = i * 45 + (r() - 0.5) * 8;
+      out += `<g transform="rotate(${f(a)})"><path filter="url(#soft)" fill="${fill}" d="${ruffled(160, 40, 3, r, 0.16)}"/>`;
+      for (const v of [-1, 0, 1]) out += `<path d="M0,-30 Q${v * 10},-90 ${v * 22},-140" fill="none" stroke="#a61e4d" stroke-width="1.3" opacity="0.28"/>`;
+      out += '</g>';
+    }
+    out += `<circle r="34" filter="url(#soft)" fill="${radialGrad(defs, [[0, '#ffe066'], [0.7, '#fab005'], [1, '#e67700']], 0.4, 0.35)}"/>`;
+    for (let i = 0; i < 40; i++) {
+      const a = r() * Math.PI * 2;
+      const d = Math.sqrt(r()) * 28;
+      out += `<circle cx="${f(Math.cos(a) * d)}" cy="${f(Math.sin(a) * d)}" r="${f(1.8 + r() * 1.4)}" fill="${r() < 0.5 ? '#f08c00' : '#ffd43b'}"/>`;
+    }
+    return out;
+  },
+
+  globeAmaranth(defs) {
+    const R = 128;
+    const light = [-0.45, -0.55, 0.7];
+    const len = Math.hypot(...light);
+    light.forEach((v, i) => (light[i] = v / len));
+    let out = `<circle r="${R}" fill="${radialGrad(defs, [[0, '#ff4fa3'], [0.6, '#c2185b'], [1, '#6d0a37']], 0.38, 0.35, 0.65)}"/>`;
+    const pts = [];
+    const r = rng(13);
+    const N = 760;
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < N; i++) {
+      const y = 1 - (i / (N - 1)) * 2;
+      const rr = Math.sqrt(1 - y * y);
+      const a = i * golden;
+      const j = (r() - 0.5) * 0.06;
+      const x = Math.cos(a) * rr + j;
+      const z = Math.sin(a) * rr;
+      if (z < -0.15) continue;
+      pts.push([x, y, z]);
+    }
+    pts.sort((p, q) => p[2] - q[2]);
+    for (const [x, y, z] of pts) {
+      const lit = Math.max(0, x * light[0] + y * light[1] + z * light[2]);
+      const side = Math.sqrt(Math.max(0, 1 - z * z));
+      const L = (13 + 9 * side) * (0.85 + r() * 0.3);
+      const ang = (Math.atan2(y, x) * 180) / Math.PI + 90 + (r() - 0.5) * 50;
+      const base = mix('#7a0a3d', '#e8318a', Math.min(1, lit * 1.1));
+      const tip = mix('#c2185b', '#ffc2e0', Math.min(1, lit * 1.15));
+      out += `<g transform="${place(x * R, y * R, ang)}"><path d="${oval(L, 6.6)}" fill="${base}"/><path transform="translate(0 ${f(-L * 0.4)})" d="${oval(L * 0.55, 3.8)}" fill="${tip}" opacity="0.9"/></g>`;
+    }
+    return out;
+  },
+};
+
+/* Every flower gets the same soft light from the top left, laid over its own shape. */
+function svgFor(key) {
+  uid = 0;
+  const defs = [];
+  const body = FLOWERS[key](defs);
+  const shade = radialGrad(defs, [[0, '#ffffff', 0.55], [0.55, '#ffffff', 0], [1, '#000000', 0.35]], 0.3, 0.25, 0.85);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -200 400 400">
+  <defs>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#3b1a00" flood-opacity="0.28"/></filter>
+    <filter id="deep" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#5a1800" flood-opacity="0.45"/></filter>
+    <filter id="pale" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#4a5a70" flood-opacity="0.3"/></filter>
+    ${defs.join('\n')}
+    <mask id="shape" mask-type="alpha"><g id="body">${body}</g></mask>
+  </defs>
+  <use href="#body"/>
+  <rect x="-200" y="-200" width="400" height="400" fill="${shade}" mask="url(#shape)" style="mix-blend-mode:soft-light"/>
+</svg>`;
+}
+
+const want = new URLSearchParams(location.search).get('f');
+document.body.className = want ? 'one' : 'sheet';
+// Each flower reuses the same ids, so on the sheet each one is its own image.
+document.body.innerHTML = want
+  ? svgFor(want)
+  : Object.keys(FLOWERS).map((k) => `<img width="200" height="200" title="${k}" src="data:image/svg+xml,${encodeURIComponent(svgFor(k))}">`).join('');
+</script>
+</body>
+</html>

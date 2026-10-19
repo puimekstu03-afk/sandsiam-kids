@@ -1,0 +1,214 @@
+/* ==========================================================================
+   SANDSIAM Kids · Stage: the canvas scene and the controls floating over it
+   ========================================================================== */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-scene);
+  overflow: hidden;
+  isolation: isolate;
+  background: #bfe9ff;
+}
+
+/* In the editor, share view and field the scene stops where the panel begins. */
+.is-editor .stage,
+.is-share .stage,
+.is-field .stage {
+  right: var(--panel-w);
+}
+
+#scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* The cartoon backdrop is bright already: only a whisper of shade at the bottom of the intro. */
+.stage-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.is-intro .stage-shade {
+  background: linear-gradient(to top, rgba(61, 44, 82, 0.28) 0%, rgba(61, 44, 82, 0) 26%);
+}
+
+/* Fireworks over the intro scene; taps go through to the scene. */
+.intro-fx {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.is-intro .intro-fx {
+  display: block;
+}
+
+.scene-note {
+  position: absolute;
+  top: calc(var(--topbar-h) + var(--s-2));
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - var(--s-6));
+  padding: var(--s-2) var(--s-4);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: var(--pop-sm);
+  pointer-events: none;
+}
+
+/* Undo / redo: a chunky toy toolbar. */
+.stage-tools {
+  position: absolute;
+  bottom: var(--edge);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: var(--s-1);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: var(--pop);
+}
+
+.tool-btn {
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  color: var(--ink);
+  transition: background 0.18s, transform 0.18s var(--ease-bounce);
+}
+
+.tool-btn:not(:disabled):hover {
+  background: var(--sun-soft);
+  transform: translateY(-2px);
+}
+
+.tool-btn:has(.tool-label) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 68px;
+  height: auto;
+  min-height: 58px;
+  padding: 4px 12px;
+  border-radius: 22px;
+}
+
+.tool-label {
+  font: 700 0.9375rem/1.2 var(--font-display);
+}
+
+.tool-zoom {
+  padding: 0 var(--s-2);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.tool-sep {
+  width: 3px;
+  height: 22px;
+  margin: 0 var(--s-1);
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.delete-btn {
+  position: absolute;
+  bottom: calc(var(--edge) + 8px);
+  left: calc(50% + 100px);
+  padding: var(--s-2) var(--s-4);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--white);
+  font: 700 1rem var(--font-display);
+  white-space: nowrap;
+  box-shadow: var(--pop);
+  transition: transform 0.18s var(--ease-bounce);
+}
+
+.delete-btn:hover {
+  background: var(--pink-deep);
+  transform: translateY(-2px);
+}
+
+.delete-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+/* Flip sits just above delete, in sky blue (side by side on phones). */
+.flip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  bottom: calc(var(--edge) + 8px + 58px);
+  background: var(--sky);
+}
+
+.flip-btn:hover {
+  background: var(--sky-deep);
+}
+
+.flip-btn[hidden] {
+  display: none;
+}
+
+.flip-btn .icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Palette for the piece the child has chosen on the scene. */
+.pick-palette {
+  position: absolute;
+  top: calc(var(--topbar-h) + var(--s-2));
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  max-width: calc(100% - var(--s-6));
+  padding: var(--s-2) var(--s-4);
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: var(--pop);
+  /* Centred with `translate` so the pop-in animation's `transform` can't shift it. */
+  translate: -50% 0;
+  animation: pop-in 0.25s var(--ease-out);
+}
+
+.pick-palette .swatches {
+  flex-wrap: nowrap;
+  gap: var(--s-2);
+}
+
+.pick-label {
+  color: var(--ink);
+  font: 700 0.9375rem var(--font-display);
+  white-space: nowrap;
+}
+
+/* The colour palette takes the hint's place while a piece is chosen. */
+.stage:has(.pick-palette:not([hidden])) .scene-note {
+  display: none;
+}

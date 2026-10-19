@@ -1,0 +1,315 @@
+/* ==========================================================================
+   SANDSIAM Kids · Step 3: the layers panel docked beside the scene.
+   Pieces are listed front to back with the pagoda as one row; drag the grip
+   handle or press the up / down buttons to change the order. On phones it sits in the panel
+   (see responsive/phone.css).
+   ========================================================================== */
+
+:root {
+  --layers-w: 17rem;
+  /* Room the docked panel takes from the scene, for centring things over the scene. */
+  --layers-room: calc(var(--layers-w) + var(--edge));
+}
+
+.layers {
+  position: absolute;
+  top: calc(var(--topbar-h) + var(--s-2));
+  right: var(--edge);
+  bottom: calc(var(--edge) + 84px);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  width: var(--layers-w);
+  border: var(--outline);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle, rgba(167, 123, 255, 0.14) 0 2px, transparent 3px) 0 0 / 20px 20px,
+    var(--paper);
+  box-shadow: var(--pop);
+  animation: pop-in 0.25s var(--ease-out);
+}
+
+.layers-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 8px 8px 8px 16px;
+  border-bottom: 3px dashed var(--line);
+}
+
+.layers-title {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  font: 700 1.0625rem var(--font-display);
+}
+
+.layers-title .icon {
+  width: 22px;
+  height: 22px;
+  color: var(--grape);
+}
+
+.layers-toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: var(--outline);
+  border-radius: 50%;
+  background: var(--grape-soft);
+  color: var(--ink);
+  box-shadow: var(--pop-sm);
+  transition: transform 0.18s var(--ease-bounce);
+}
+
+.layers-toggle:hover {
+  transform: translateY(-2px);
+}
+
+/* Folded away: only the round layers button stays. */
+.layers.is-collapsed {
+  bottom: auto;
+  width: auto;
+  border-radius: 999px;
+}
+
+.layers.is-collapsed .layers-head {
+  padding: 4px;
+  border: 0;
+}
+
+.layers.is-collapsed .layers-title {
+  display: none;
+}
+
+.layers-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px 12px 14px;
+}
+
+.layers-hint {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.layers-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 10px 0 6px;
+  color: var(--muted);
+  font: 700 0.9375rem var(--font-display);
+  text-align: center;
+}
+
+.layers-end .icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 3;
+}
+
+.layers.is-empty .layers-end {
+  display: none;
+}
+
+.layers-list {
+  display: grid;
+  /* minmax(0, …) lets long names shrink to an ellipsis instead of widening the row. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.layers-empty {
+  margin-top: var(--s-3);
+  padding: var(--s-3);
+  border: var(--bw) dashed var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: 600 0.9375rem/1.5 var(--font-display);
+  text-align: center;
+}
+
+.layer-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 54px;
+  padding: 3px 4px 3px 0;
+  border: 2.5px solid var(--line);
+  border-radius: 16px;
+  background: var(--white);
+  transition: background 0.18s, transform 0.18s var(--ease-bounce);
+}
+
+/* Pieces standing behind the pagoda look a little faded. */
+.layer-row.is-behind {
+  background: var(--line-soft);
+}
+
+.layer-row.is-behind .layer-icon {
+  opacity: 0.7;
+}
+
+.layer-row.is-selected {
+  border-color: var(--ink);
+  background: var(--pink-soft);
+  box-shadow: var(--pop-sm);
+}
+
+.layer-row.is-selected .layer-icon {
+  opacity: 1;
+}
+
+/* The pagoda's own row divides front from back. */
+.layer-pagoda {
+  gap: 8px;
+  border: var(--bw) dashed var(--sun-deep);
+  background: var(--sun-soft);
+  font: 700 0.9375rem var(--font-display);
+}
+
+.layer-handle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  align-self: stretch;
+  width: 30px;
+  border-radius: 12px 0 0 12px;
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.layer-row:not(.layer-pagoda) .layer-handle:hover {
+  background: var(--sky-soft);
+  color: var(--ink);
+}
+
+.layer-pick {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 4px 0 0;
+  font: 600 0.9375rem var(--font-display);
+  text-align: left;
+}
+
+.layer-pick span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layer-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+
+.layer-btn {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--ink);
+}
+
+.layer-btn .icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 3;
+}
+
+.layer-btn:not(:disabled):hover {
+  background: var(--white);
+}
+
+.layer-remove {
+  color: var(--pink-deep);
+}
+
+.is-layer-dragging,
+.is-layer-dragging * {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.is-layer-dragging .layer-row.is-selected {
+  transform: scale(1.03) rotate(-1deg);
+}
+
+/* Size and nudge buttons for the chosen piece. */
+.layer-controls {
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 3px dashed var(--line);
+}
+
+.layer-controls-title {
+  font: 700 1rem var(--font-display);
+}
+
+.layer-controls .field-label {
+  margin: var(--s-3) 0 var(--s-1);
+  font-size: 1rem;
+}
+
+.layer-controls .move-pad {
+  margin-top: var(--s-1);
+}
+
+.layer-controls .move-pad .btn-ghost {
+  min-height: 46px;
+  padding: 6px;
+}
+
+/* While the panel is docked, things floating over the scene centre on the space left of it. */
+.layers-open .pick-palette,
+.layers-open .scene-note,
+.layers-open .stage-tools {
+  left: calc((100% - var(--layers-room)) / 2);
+}
+
+.layers-open .pick-palette {
+  max-width: calc(100% - var(--layers-room) - var(--s-5));
+}
+
+/* The guide's bubble stops short of the docked panel. */
+.layers-open .stage > .guide {
+  max-width: min(34rem, calc(100% - var(--layers-room) - var(--edge) * 2));
+}
+
+.layers-open .delete-btn {
+  left: calc((100% - var(--layers-room)) / 2 + 100px);
+}
+
+.layers-open.is-editor #toast {
+  left: calc((100% - var(--panel-w) - var(--layers-room)) / 2);
+}
+
+@media (max-width: 1100px) {
+  :root {
+    --layers-w: 16.5rem;
+  }
+
+  .layers-open .pick-label {
+    display: none;
+  }
+}

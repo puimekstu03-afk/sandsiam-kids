@@ -1,0 +1,439 @@
+/* ==========================================================================
+   SANDSIAM Kids · Phones and upright tablets: the scene on top, the panel as a
+   sheet below it. An iPad held upright is too narrow for the panel beside the
+   scene, so it stacks the same way, with tablet-sized type and a wider grid.
+   Keep the query in step with STACKED_QUERY in js/app/main.js.
+   ========================================================================== */
+
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+  body {
+    overflow: auto;
+  }
+
+  .is-intro {
+    overflow: hidden;
+  }
+
+  .stage,
+  .is-editor .stage,
+  .is-share .stage {
+    position: relative;
+    right: auto;
+    height: 100dvh;
+  }
+
+  .is-editor .stage {
+    height: 52dvh;
+    min-height: 320px;
+  }
+
+  .is-share .stage {
+    height: 56dvh;
+    min-height: 340px;
+  }
+
+  .is-field .stage {
+    position: relative;
+    right: auto;
+    height: 58dvh;
+    min-height: 360px;
+  }
+
+  .topbar,
+  .is-editor .topbar,
+  .is-share .topbar,
+  .is-field .topbar {
+    position: absolute;
+    right: 0;
+  }
+
+  .site-footer {
+    display: none;
+  }
+
+  /* Panel becomes a sheet under the scene. */
+  .panel,
+  .share-view {
+    position: relative;
+    inset: auto;
+    z-index: var(--z-panel);
+    width: auto;
+    margin-top: -24px;
+    border-width: 4px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -4px 0 rgba(61, 44, 82, 0.15);
+    overflow: visible;
+    animation-name: sheet-in;
+  }
+
+  .panel-head {
+    padding: var(--s-4) var(--s-4) 0;
+  }
+
+  .panel-head .wordmark {
+    display: none;
+  }
+
+  .steps {
+    margin-top: 0;
+  }
+
+  .editor-head,
+  .editor-foot,
+  .share-body,
+  .field-body {
+    padding-left: var(--s-4);
+    padding-right: var(--s-4);
+  }
+
+  .editor-body {
+    overflow: visible;
+    padding: 0 var(--s-4) var(--s-4);
+  }
+
+  .editor-foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    padding-bottom: max(var(--s-4), env(safe-area-inset-bottom, 0px));
+  }
+
+  .stage-tools {
+    bottom: var(--s-6);
+  }
+
+  .delete-btn {
+    left: 50%;
+    bottom: calc(var(--s-6) + 76px);
+    transform: translateX(-50%);
+  }
+
+  .delete-btn:hover {
+    transform: translateX(-50%) translateY(-2px);
+  }
+
+  /* With flip showing, the two buttons sit side by side either side of the middle. */
+  .delete-btn:has(~ .flip-btn:not([hidden])) {
+    left: calc(50% + 6px);
+    transform: none;
+  }
+
+  .flip-btn {
+    left: auto;
+    right: calc(50% + 6px);
+    transform: none;
+  }
+
+  .flip-btn:hover,
+  .delete-btn:has(~ .flip-btn:not([hidden])):hover {
+    transform: translateY(-2px);
+  }
+
+  /* Messages appear at the top of the scene, clear of the panel and tools. */
+  #toast,
+  .is-editor #toast,
+  .is-share #toast,
+  .is-field #toast {
+    position: fixed;
+    top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -12px) scale(0.9);
+  }
+
+  #toast.show,
+  .is-editor #toast.show,
+  .is-share #toast.show,
+  .is-field #toast.show {
+    transform: translate(-50%, 0) scale(1);
+  }
+
+  /* The guide sits in the panel, above the step title. */
+  .editor .guide {
+    position: static;
+    max-width: none;
+    margin: var(--s-3) var(--s-4) 0;
+    align-items: center;
+  }
+
+  .editor .guide-face {
+    width: 84px;
+    animation: none;
+  }
+
+  .editor .guide-bubble {
+    margin-bottom: 0;
+    font-size: 1rem;
+    box-shadow: var(--pop-sm);
+  }
+
+  /* The layers panel sits in the panel, above the footer. */
+  .editor .layers {
+    position: static;
+    width: auto;
+    margin: 0 var(--s-4) var(--s-4);
+    animation: none;
+  }
+
+  .editor .layers-body {
+    overflow: visible;
+  }
+}
+
+/* Upright tablets: a whole screen's width for the sheet, so use it. */
+@media (min-width: 761px) and (max-width: 1100px) and (orientation: portrait) {
+  html {
+    font-size: 17.5px;
+  }
+
+  .panel-head,
+  .editor-head,
+  .editor-foot,
+  .share-body,
+  .field-body {
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+
+  .editor-body {
+    padding: 0 var(--s-6) var(--s-5);
+  }
+
+  .editor .guide {
+    margin: var(--s-4) var(--s-6) 0;
+  }
+
+  .editor .guide-face {
+    width: 104px;
+  }
+
+  .editor .layers {
+    margin: 0 var(--s-6) var(--s-5);
+  }
+
+  /* Back and next stay thumb-sized instead of stretching across the screen. */
+  .editor-foot {
+    justify-content: flex-end;
+  }
+
+  .editor-foot .btn-gold {
+    flex: 0 1 22rem;
+  }
+
+  .editor-foot > * {
+    min-height: 58px;
+  }
+
+  .item-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  /* Five regions: three on the first row, two wider ones below. */
+  .field-regions {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .field-region {
+    grid-column: span 2;
+  }
+
+  .field-region:nth-child(n + 4) {
+    grid-column: span 3;
+  }
+}
+
+/* Phones: smaller round buttons and a simpler intro. */
+@media (max-width: 760px) {
+  :root {
+    --edge: 16px;
+    --topbar-h: 64px;
+  }
+
+  .icon-btn {
+    width: 46px;
+    height: 46px;
+  }
+
+  .topbar-icons,
+  .topbar-right {
+    gap: 6px;
+  }
+
+  .lang-btn {
+    width: auto;
+    padding: 0 var(--s-2);
+  }
+
+  /* Fewer, simpler things over the scene. */
+  .player-btn span,
+  .scene-note {
+    display: none;
+  }
+
+  .player-btn {
+    width: 46px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  /* Intro */
+  .hero {
+    top: calc(var(--topbar-h) + var(--s-4));
+    animation-name: fade-in;
+  }
+
+  .splash {
+    padding: var(--s-5) var(--s-5) 34px;
+    border-radius: 30px;
+  }
+
+  .splash::before {
+    inset: 7px;
+    border-radius: 23px;
+  }
+
+  .splash-brand {
+    top: -18px;
+    font-size: 0.9375rem;
+  }
+
+  .hero-title {
+    font-size: 1.375rem;
+  }
+
+  .hero-title-accent {
+    font-size: 1.875rem;
+  }
+
+  .splash-flower-a {
+    left: -28px;
+    width: 62px;
+  }
+
+  .splash-flower-b {
+    top: -8px;
+    right: -14px;
+    width: 42px;
+  }
+
+  .splash-flower-c {
+    right: -28px;
+    width: 56px;
+  }
+
+  .splash-sparkle-a {
+    top: 6px;
+    left: -24px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .splash-sparkle-b {
+    top: -30px;
+  }
+
+  .splash-sparkle-c {
+    right: -26px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .counter {
+    margin-top: -20px;
+    font-size: 1rem;
+  }
+
+  .counter b {
+    font-size: 1.375rem;
+  }
+
+  .intro-bottom {
+    gap: var(--s-2);
+    padding-bottom: max(var(--s-4), env(safe-area-inset-bottom, 0px));
+  }
+
+  .regions-list {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    max-width: calc(100vw - var(--s-5));
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .region-btn {
+    flex: none;
+    font-size: 1rem;
+  }
+
+  .regions-caption {
+    font-size: 0.9375rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .hero-actions {
+    width: 100%;
+    gap: var(--s-3);
+  }
+
+  .hero-actions .btn-hero {
+    flex: 1;
+    min-height: 56px;
+    padding: 10px 14px;
+    font-size: 1.1875rem;
+  }
+
+  .step {
+    font-size: 0.875rem;
+  }
+
+  .step-number {
+    width: 42px;
+    height: 42px;
+  }
+
+  .editor-head h2 {
+    font-size: 1.375rem;
+  }
+
+  .share-view h2,
+  .field-body h2 {
+    font-size: 1.5rem;
+  }
+
+  .map-layout {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+
+  .pick-palette {
+    top: calc(var(--topbar-h) + var(--s-1));
+    gap: var(--s-2);
+    padding: 6px var(--s-3);
+  }
+
+  .pick-label {
+    display: none;
+  }
+
+  .pick-palette .swatch {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Very narrow phones: six round buttons share the top bar, so make them a little smaller. */
+@media (max-width: 380px) {
+  .icon-btn,
+  .player-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .lang-btn {
+    width: auto;
+  }
+
+  .icon-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
