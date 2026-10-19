@@ -517,6 +517,8 @@
   /* ----- Counter & pagoda field ----- */
 
   let counts = { total: 0, byPlace: PLACES.map(() => 0) };
+  // False while the shared field can't be reached (for example a paused database).
+  let fieldOnline = true;
   let fieldPlace = 0;
   // A region fills one field (ลาน) of FIELD_SIZE pagodas at a time; a full field opens the next.
   let fieldPage = 0;
@@ -548,9 +550,11 @@
   async function refreshCounts() {
     try {
       counts = await fieldStore.count(PLACES.length);
+      fieldOnline = true;
     } catch {
-      /* Keep the last known numbers. */
+      fieldOnline = !fieldStore.shared; // keep the last known numbers
     }
+    $('.counter').hidden = !fieldOnline;
     showCount($('#counterValue'), counts.total);
     document.querySelectorAll('.region-btn small').forEach((n, i) => {
       n.textContent = String(counts.byPlace[i] || 0);
@@ -615,6 +619,7 @@
     } catch {
       if (load !== fieldLoads) return;
       fieldEntries = [];
+      fieldOnline = !fieldStore.shared;
     }
     renderField();
     draw();
@@ -663,7 +668,7 @@
   }
 
   function renderField() {
-    $('#fieldNote').textContent = t(fieldStore.shared ? 'fieldSharedNote' : 'fieldLocalNote');
+    $('#fieldNote').textContent = t(!fieldOnline ? 'fieldOffline' : fieldStore.shared ? 'fieldSharedNote' : 'fieldLocalNote');
     $('#fieldTotal').textContent = `${t('counterBefore')} ${counts.total.toLocaleString(lang)} ${t('counterAfter')}`.trim();
     const tabs = $('#fieldRegions');
     tabs.replaceChildren();
@@ -741,23 +746,56 @@
     loadField(place, page);
   }
 
-  /** Offers this pagoda in its region, then celebrates it. */
+  // True while an offer is on its way, so a second tap doesn't send it twice.
+  let offering = false;
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function showOffering(on) {
+    offering = on;
+    document.querySelectorAll('[data-offer]').forEach((b) => (b.disabled = on));
+  }
+
+  /** Offers this pagoda in its region, then celebrates it. A busy field is tried again a few times. */
   async function offer() {
+    if (offering) return;
     if (!Polite.ok(state.name) || !Polite.ok(state.wish)) {
       Sound.play('wrong');
       toast(t('notPolite'));
       return goTo(3);
     }
+    showOffering(true);
     try {
       const picture = await pictureBlob(state);
-      await fieldStore.offer(JSON.parse(snapshot()), Players.current()?.id || 'guest', picture);
+      const work = JSON.parse(snapshot());
+      const player = Players.current()?.id || 'guest';
+      for (let tries = 0; ; tries++) {
+        try {
+          await fieldStore.offer(work, player, picture);
+          break;
+        } catch (err) {
+          // 'busy': the whole field is busy · 'wait': many offers from this school's address
+          // this minute. Both clear by themselves, so wait a little (longer for 'wait') and retry.
+          const code = err && err.code;
+          if ((code !== 'busy' && code !== 'wait') || tries >= 3) throw err;
+          toast(t('offerBusy'));
+          await wait((code === 'wait' ? 10000 : 3000) * (tries + 1) + Math.random() * 3000);
+        }
+      }
       Sound.play('celebrate');
       fieldCache.clear();
       toast(fill(t('offered'), { place: t('places')[state.place] }));
       refreshCounts();
       openShare();
-    } catch {
-      toast(t('offerFail'));
+    } catch (err) {
+      const code = err && err.code;
+      if (code === 'not_polite') {
+        Sound.play('wrong');
+        toast(t('notPolite'));
+        return goTo(3);
+      }
+      toast(t(code === 'slow_down' || code === 'wait' ? 'offerSlow' : code === 'full' ? 'offerFull' : 'offerFail'));
+    } finally {
+      showOffering(false);
     }
   }
 
@@ -1223,7 +1261,12 @@
     p.append(card);
 
     const actions = el('div', 'big-actions');
-    if (fieldStore.canWrite) actions.append(button(fill(t('offer'), { place: t('places')[state.place] }), offer, 'btn-gold btn-big'));
+    if (fieldStore.canWrite) {
+      const send = button(fill(t('offer'), { place: t('places')[state.place] }), offer, 'btn-gold btn-big');
+      send.dataset.offer = '';
+      send.disabled = offering;
+      actions.append(send);
+    }
     actions.append(button(t('download'), () => exportImage(state), 'btn-outline btn-big'));
     p.append(actions);
     if (!fieldStore.canWrite) p.append(note(t('offerReadOnly'), 'tip'));
@@ -1504,11 +1547,14 @@
     return out;
   }
 
-  /** A smaller JPEG of the pagoda for the field's picture store (under 1 MB); null if it fails. */
+  /** A smaller JPEG of the pagoda for the field's picture store (the server takes up to 400 KB); null if it fails. */
   async function pictureBlob(s) {
     try {
-      const out = await drawPicture(s, 1200, 1050);
-      return await new Promise((resolve) => out.toBlob((b) => resolve(b && b.size < 1048576 ? b : null), 'image/jpeg', 0.85));
+      const out = await drawPicture(s, 960, 840);
+      const jpeg = (quality) => new Promise((resolve) => out.toBlob(resolve, 'image/jpeg', quality));
+      let blob = await jpeg(0.82);
+      if (blob && blob.size > 380 * 1024) blob = await jpeg(0.6);
+      return blob && blob.size <= 380 * 1024 ? blob : null;
     } catch {
       return null;
     }

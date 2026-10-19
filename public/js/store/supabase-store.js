@@ -4,11 +4,10 @@
  * SANDSIAM · Pagoda field in Supabase (project "sandsiam", supabase/migrations/).
  *
  * Open to everyone, no sign-in or codes: this browser keeps a random device id (never shown
- * to others), and every call goes through a database function that checks its input.
- * A pagoda shows in the field as soon as it is offered, with a picture of it kept in the
- * `pagoda-images` bucket. Opening the page and starting to build are noted in `visits`,
- * so the field can count who came to play. The publishable key is meant to be public:
- * the tables themselves are closed to it.
+ * to others). Reading goes through database functions with the publishable key, which is
+ * meant to be public. Writing (offering a pagoda with its picture, noting a visit) goes
+ * only through the Edge Function `field` (supabase/functions/field/), which limits how
+ * much each internet address can write and checks for rude words again.
  */
 const SUPABASE = {
   url: 'https://uwhqcqyferxicsjftfeq.supabase.co',
@@ -48,37 +47,36 @@ function createSupabaseFieldStore(changed) {
     return data;
   }
 
-  /** Uploads a JPEG of the pagoda; resolves its file name, or null if it didn't go. */
-  async function upload(picture) {
-    if (!picture) return null;
-    const name = (crypto.randomUUID ? crypto.randomUUID() : fallbackUuid()) + '.jpg';
+  /** Posts to the Edge Function; resolves its JSON, or throws with `code` (busy, slow_down, full, not_polite …). */
+  async function write(action, data, picture = null) {
+    const form = new FormData();
+    form.append('action', action);
+    form.append('data', JSON.stringify(data));
+    if (picture) form.append('picture', picture, 'pagoda.jpg');
+    // A plain form post: no extra headers, so the browser sends it without a preflight.
+    const res = await fetch(`${SUPABASE.url}/functions/v1/field`, { method: 'POST', body: form });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) throw Object.assign(new Error((body && body.error) || res.statusText), { code: (body && body.error) || 'failed' });
+    return body;
+  }
+
+  // Pick up pagodas offered elsewhere while the page stays open: a small check every
+  // REFRESH_MS, and the field is fetched again only when the numbers or latest change moved.
+  let seen = null;
+  async function check() {
+    if (document.hidden) return;
     try {
-      const res = await fetch(`${SUPABASE.url}/storage/v1/object/pagoda-images/${name}`, {
-        method: 'POST',
-        headers: { apikey: SUPABASE.key, 'Content-Type': 'image/jpeg' },
-        body: picture,
-      });
-      return res.ok ? name : null;
+      const c = await rpc('field_counts');
+      const now = `${c.total}:${c.stamp}`;
+      if (seen !== null && now !== seen) changed();
+      seen = now;
     } catch {
-      return null; // the pagoda still goes in the field without its picture
+      /* Offline for now: the next check tries again. */
     }
   }
-
-  function fallbackUuid() {
-    const b = crypto.getRandomValues(new Uint8Array(16));
-    b[6] = (b[6] & 0x0f) | 0x40;
-    b[8] = (b[8] & 0x3f) | 0x80;
-    const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
-    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
-  }
-
-  // Pick up pagodas offered elsewhere while the page stays open.
-  setInterval(() => {
-    if (!document.hidden) changed();
-  }, REFRESH_MS);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) changed();
-  });
+  setInterval(check, REFRESH_MS);
+  document.addEventListener('visibilitychange', check);
+  check();
 
   return {
     shared: true,
@@ -103,21 +101,23 @@ function createSupabaseFieldStore(changed) {
         total: Number(c.total) || 0,
         byPlace: Array.from({ length: places }, (_, i) => Number(c.byPlace[i]) || 0),
         people: Number(c.people) || 0,
-        players: Number(c.players) || 0,
       };
     },
 
     /** Offers the pagoda with its picture (a JPEG Blob, optional). */
     async offer(state, player = 'guest', picture = null) {
-      const entry = await rpc('offer_pagoda', {
-        p_device: device,
-        p_player: playerId(player),
-        p_place: state.place,
-        p_state: state,
-        p_name: String(state.name || '').slice(0, 40),
-        p_wish: String(state.wish || '').slice(0, 180),
-        p_image: await upload(picture),
-      });
+      const entry = await write(
+        'offer',
+        {
+          device,
+          player: playerId(player),
+          place: state.place,
+          state,
+          name: String(state.name || '').slice(0, 40),
+          wish: String(state.wish || '').slice(0, 180),
+        },
+        picture,
+      );
       remember([entry]);
       changed();
       return entry;
@@ -130,7 +130,7 @@ function createSupabaseFieldStore(changed) {
     /** Notes that someone opened the page ('open') or started building ('play'). */
     async logVisit(kind, player = 'guest') {
       try {
-        await rpc('log_visit', { p_device: device, p_player: playerId(player), p_kind: kind });
+        await write('visit', { device, player: playerId(player), kind });
       } catch {
         /* Counting never gets in the way of playing. */
       }

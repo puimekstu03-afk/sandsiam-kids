@@ -1,8 +1,10 @@
 'use strict';
 
 /**
- * SANDSIAM · Music: soft background music from assets/music/songkran.mp3,
- * looping for as long as the page is open, across every screen.
+ * SANDSIAM · Music: soft background music from assets/music/songkran.m4a (3½ minutes,
+ * mono AAC, about 1.7 MB), looping for as long as the page is open, across every screen.
+ * Made by tools/make-music-loop.py from the full 43-minute recording, which is too big
+ * to send to every child.
  *
  * It tries to start by itself as soon as the page opens. Most browsers block
  * sound until the visitor has tapped the page, so if that happens it starts on
@@ -11,7 +13,7 @@
  */
 const Music = (() => {
   const KEY = 'sandsiam-music';
-  const SRC = 'assets/music/songkran.mp3';
+  const SRC = 'assets/music/songkran.m4a';
   const VOLUME = 0.25; // quiet, under the tap sounds
   const FADE_IN = 2.5; // seconds
 
