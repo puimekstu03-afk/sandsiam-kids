@@ -6,6 +6,17 @@
   <meta name="theme-color" content="#4cc3ff">
   <meta name="description" content="Create your own Songkran sand pagoda. A little sand, a little art, a beautiful Thai tradition. ไทย · English · 中文">
   <title>SANDSIAM · ก่อเจดีย์ทรายวันสงกรานต์</title>
+  <!-- The preview card when a link is shared on Facebook, X or LINE (picture: tools/make-share-card.mjs).
+       No og:url: Facebook would send every shared pagoda link to that one address instead. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SANDSIAM">
+  <meta property="og:title" content="SANDSIAM · ก่อเจดีย์ทรายวันสงกรานต์">
+  <meta property="og:description" content="มาก่อเจดีย์ทรายของคุณเอง ตกแต่ง เขียนคำอวยพร แล้วนำไปตั้งที่ลานเจดีย์กับเพื่อน ๆ ทั่วประเทศ · Build your own Songkran sand pagoda">
+  <meta property="og:image" content="https://puimekstu03-afk.github.io/sandsiam-kids/assets/share/card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A cartoon sand pagoda decorated with flowers and flags, with the words SANDSIAM">
+  <meta name="twitter:card" content="summary_large_image">
 
   <!-- Mali: a child's rounded handwriting with looped letters, for headings and body text alike.
        ZCOOL KuaiLe: playful Chinese headings. Noto Sans SC: readable Chinese body text.
@@ -79,6 +90,7 @@
     <symbol id="i-minus" viewBox="0 0 24 24"><!-- minus --><path d="M5 12h14"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><!-- plus --><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
     <symbol id="i-link" viewBox="0 0 24 24"><!-- link --><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><!-- share-2 --><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></symbol>
     <symbol id="i-arrow-right" viewBox="0 0 24 24"><!-- arrow-right --><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
     <symbol id="i-map-pin" viewBox="0 0 24 24"><!-- map-pin --><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
     <symbol id="i-castle" viewBox="0 0 24 24"><!-- castle --><path d="M10 5V3"/><path d="M14 5V3"/><path d="M15 21v-3a3 3 0 0 0-6 0v3"/><path d="M18 3v8"/><path d="M18 5H6"/><path d="M22 11H2"/><path d="M22 9v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9"/><path d="M6 3v8"/></symbol>
@@ -263,11 +275,29 @@
       </figure>
 
       <p id="shareKids" class="share-kids"></p>
-      <!-- Children copy the link and give it to a teacher or parent (social networks are for 13+). -->
-      <div id="shareLinkBox" class="share-link">
-        <button id="shareCopy" class="btn-outline btn-block" type="button">
-          <svg class="icon" aria-hidden="true"><use href="#i-link"/></svg><span data-t="share"></span>
+      <!-- Sharing invites friends to come and build their own. Social networks are for 13+, so
+           the note above asks children to share with a teacher or parent. The story button
+           shares a 9:16 picture (phones: the share sheet, with Instagram and Facebook; computers:
+           a saved picture); the round buttons share the pagoda's link (main.js · share view). -->
+      <div class="share-link">
+        <button id="shareStory" class="btn-story btn-block" type="button">
+          <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg><span data-t="shareStory"></span>
         </button>
+        <p class="share-to" data-t="shareOn"></p>
+        <div class="share-row">
+          <a id="shareFacebook" class="social-btn social-facebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 8H17V4.5h-2.5C12 4.5 10.5 6 10.5 8.5V10H8v3.5h2.5V21H14v-7.5h2.6L17 10h-3V8.6c0-.4.2-.6.5-.6Z"/></svg>
+          </a>
+          <a id="shareX" class="social-btn social-x" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a id="shareLine" class="social-btn social-line" target="_blank" rel="noopener noreferrer" aria-label="LINE" title="LINE">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.2 3 11.1c0 3.5 3.1 6.4 7.4 7l-.5 2.4c-.1.4.3.7.7.5 2.7-1.5 6.9-4.2 8.6-6.6.9-1.1 1.3-2.2 1.3-3.3C20.5 7.2 17 4 12 4Z"/></svg>
+          </a>
+          <button id="shareCopy" class="social-btn social-copy" type="button">
+            <svg aria-hidden="true"><use href="#i-link"/></svg>
+          </button>
+        </div>
         <input id="shareField" class="input share-field" type="text" readonly hidden aria-label="Link">
       </div>
     </div>
@@ -381,6 +411,7 @@
   <!-- The app -->
   <script src="js/app/config.js"></script>
   <script src="js/app/state.js"></script>
+  <script src="js/app/share-link.js"></script>
   <script src="js/app/layers.js"></script>
   <script src="js/app/main.js"></script>
 </body>

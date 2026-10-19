@@ -29,17 +29,105 @@ function drawExportCaption(c, w, h, state, text) {
 
   c.fillStyle = INK;
   c.font = '500 22px "Mali", "Noto Sans SC", sans-serif';
-  const lines = [''];
-  for (const char of state.wish) {
-    if (char === '\n' || c.measureText(lines[lines.length - 1] + char).width > w - 160) lines.push('');
-    if (char !== '\n') lines[lines.length - 1] += char;
-  }
-  lines.slice(0, 3).forEach((line, i) => c.fillText(line, w / 2, top + 94 + i * 28));
+  wrapText(c, state.wish, w - 160, 3).forEach((line, i) => c.fillText(line, w / 2, top + 94 + i * 28));
   if (state.name) {
     c.fillStyle = '#7a6a8a';
     c.font = '600 19px "Mali", "Noto Sans SC", sans-serif';
     c.fillText('— ' + state.name + ' —', w / 2, top + 166);
   }
+}
+
+/**
+ * Text broken into lines that fit `width` with the current font (at most `max` lines).
+ * Breaks between words, Thai ones too (Thai has no spaces, so Intl.Segmenter finds them);
+ * a word longer than a line is broken by letters.
+ */
+function wrapText(c, text, width, max) {
+  const words = typeof Intl.Segmenter === 'function'
+    ? Array.from(new Intl.Segmenter(undefined, { granularity: 'word' }).segment(text), (part) => part.segment)
+    : Array.from(text);
+  const lines = [''];
+  const fits = (line) => c.measureText(line).width <= width;
+  for (const word of words) {
+    if (word === '\n') {
+      lines.push('');
+      continue;
+    }
+    const last = lines.length - 1;
+    if (fits(lines[last] + word)) lines[last] += word;
+    else if (fits(word.trimStart())) lines.push(word.trimStart());
+    else for (const char of word) fits(lines[lines.length - 1] + char) ? (lines[lines.length - 1] += char) : lines.push(char);
+  }
+  return lines.map((line) => line.trim()).filter((line, i) => line || i === 0).slice(0, max);
+}
+
+/** A cream card with a thick cartoon outline and a hard shadow. */
+function cartoonCard(c, x, y, w, h, r, fill = '#fffaf0') {
+  c.save();
+  c.fillStyle = INK;
+  c.beginPath();
+  c.roundRect(x, y + 10, w, h, r);
+  c.fill();
+  c.fillStyle = fill;
+  c.strokeStyle = INK;
+  c.lineWidth = 7;
+  c.beginPath();
+  c.roundRect(x, y, w, h, r);
+  c.fill();
+  c.stroke();
+  c.restore();
+}
+
+/** Sizes of a story picture (Instagram / Facebook stories are 9:16). */
+const STORY = { w: 1080, h: 1920, insets: { top: 360, right: 70, bottom: 720, left: 70 } };
+
+/**
+ * The words on a story picture, around the pagoda that renderScene drew with STORY.insets:
+ * the SANDSIAM title on top, the blessing card, and an invitation with the site's address
+ * so friends can come and build their own. text: {season, cta, site}.
+ */
+function drawStoryCard(c, w, h, state, text) {
+  const font = (weight, size) => `${weight} ${size}px "Mali", "ZCOOL KuaiLe", "Noto Sans SC", sans-serif`;
+  c.save();
+  c.textAlign = 'center';
+  c.lineJoin = 'round';
+
+  // Title: chunky letters with a dark outline, readable over any sky.
+  c.font = font(700, 120);
+  c.lineWidth = 18;
+  c.strokeStyle = INK;
+  c.strokeText('SANDSIAM', w / 2, 200);
+  c.fillStyle = '#ffc93c';
+  c.fillText('SANDSIAM', w / 2, 200);
+  c.font = font(700, 52);
+  c.lineWidth = 12;
+  c.strokeText(text.season, w / 2, 282);
+  c.fillStyle = '#fff';
+  c.fillText(text.season, w / 2, 282);
+
+  // The blessing, and who made the pagoda.
+  c.font = font(600, 46);
+  const lines = wrapText(c, state.wish || '', w - 220, 3);
+  const cardH = 90 + lines.length * 62 + (state.name ? 70 : 0);
+  const cardY = h - 380 - cardH;
+  cartoonCard(c, 60, cardY, w - 120, cardH, 48);
+  c.fillStyle = INK;
+  lines.forEach((line, i) => c.fillText(line, w / 2, cardY + 82 + i * 62));
+  if (state.name) {
+    c.font = font(700, 40);
+    c.fillStyle = '#e0447e';
+    c.fillText('— ' + state.name + ' —', w / 2, cardY + 82 + lines.length * 62 + 22);
+  }
+
+  // The invitation: what to do, and where.
+  cartoonCard(c, 60, h - 320, w - 120, 210, 105, '#e0447e');
+  c.fillStyle = '#fff';
+  c.font = font(700, 54);
+  c.fillText(text.cta, w / 2, h - 222);
+  c.font = font(600, 36);
+  c.fillStyle = '#ffe8a3';
+  c.fillText(text.site, w / 2, h - 160);
+  c.restore();
 }
 
 /**
@@ -57,11 +145,12 @@ function drawExportCaption(c, w, h, state, text) {
  *   fxPlace: which backdrop the effects belong to (defaults to state.place),
  *   reveal: 0…1 while the pagoda rises and decorations pop in (omit when done),
  *   cache: an object kept between frames to reuse the drawn pagoda,
- *   exporting: true for the PNG file, caption: {title} for that file.
+ *   exporting: true for the PNG file, caption: {title} for that file (none on a story,
+ *   which passes its own insets and draws its words with drawStoryCard).
  */
 function renderScene(c, w, h, opts) {
   const { state, image, zoom = 1, selected = null, exporting = false } = opts;
-  const insets = exporting ? { top: 90, right: 60, bottom: 230, left: 60 } : opts.insets;
+  const insets = exporting ? opts.insets || { top: 90, right: 60, bottom: 230, left: 60 } : opts.insets;
   const animate = !exporting && !!opts.animate;
   const reveal = exporting || opts.reveal === undefined ? 1 : clamp01(opts.reveal);
   const place = opts.fxPlace ?? state.place;
@@ -92,7 +181,7 @@ function renderScene(c, w, h, opts) {
   c.restore();
 
   if (animate) drawEffects(c, w, h, sceneClock.t, place, map);
-  if (exporting) drawExportCaption(c, w, h, state, opts.caption);
+  if (exporting && opts.caption) drawExportCaption(c, w, h, state, opts.caption);
   return { x, y, scale };
 }
 

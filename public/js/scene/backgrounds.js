@@ -70,6 +70,16 @@ function placeBackdrop(place) {
   return img && img.complete && img.naturalWidth > 0 ? img : null;
 }
 
+/** Resolves the picture for a place once it has loaded (null if it can't), for pictures made to keep. */
+function placeBackdropReady(place) {
+  const img = placePhotos[place];
+  if (!img || img.complete) return Promise.resolve(placeBackdrop(place));
+  return new Promise((resolve) => {
+    img.addEventListener('load', () => resolve(placeBackdrop(place)), { once: true });
+    img.addEventListener('error', () => resolve(null), { once: true });
+  });
+}
+
 /** CSS background for the small pictures in the panel. */
 const backdropThumb = (place) => `url("assets/places/bg-${PLACE_PHOTOS[place] || PLACE_PHOTOS[0]}.jpg")`;
 

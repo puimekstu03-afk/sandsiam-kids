@@ -39,7 +39,6 @@
   let history = [];
   let future = [];
   let saveOK = true;
-  let shareError = false;
 
   try {
     lang = localStorage.getItem(LANG_KEY) || 'th';
@@ -65,18 +64,6 @@
   }
   loadPlayerState();
 
-  // A shared creation opens in the celebration view, kept apart from your own work.
-  if (location.hash.startsWith('#art=')) {
-    try {
-      if (location.hash.length > 24000) throw Error('Too long');
-      const bytes = Uint8Array.from(atob(location.hash.slice(5)), (ch) => ch.charCodeAt(0));
-      viewing = validate(JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)));
-      mode = 'share';
-    } catch {
-      shareError = true;
-    }
-  }
-
   const t = (key) => TRANSLATIONS[lang][key];
   const fill = (text, values) => text.replace(/\{(\w+)\}/g, (_, k) => values[k] ?? '');
   const placeLabel = (i) => `${t('places')[i]} · ${t('placeAreas')[i]}`;
@@ -86,13 +73,22 @@
   /** This game's address for other people: the page's own, or SITE_URL where they couldn't open it. */
   function pageUrl() {
     const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|10\.|192\.168\.|\[::1\])/.test(location.hostname);
-    return inArtifact || local ? SITE_URL : location.origin + location.pathname + location.search;
+    return inArtifact || local ? SITE_URL : location.origin + location.pathname;
   }
 
-  /** A link that opens this pagoda in the celebration view. */
-  function shareUrl(s) {
-    const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(s))));
-    return pageUrl() + '#art=' + encoded;
+  /** A link that opens this pagoda in the celebration view (share-link.js). */
+  const shareUrl = async (s) => pageUrl() + (await ShareLink.encode(s));
+
+  /** A shared creation (from this page's address) opens in the celebration view, kept apart from your own work. */
+  async function openSharedLink() {
+    try {
+      viewing = validate(await ShareLink.decode(location));
+    } catch {
+      toast(t('invalid'));
+      return;
+    }
+    setMode('share');
+    startReveal();
   }
 
   function persist() {
@@ -1322,9 +1318,10 @@
       : fill(t('sharedBy'), { name: s.name || t('friend'), place: placeLabel(s.place) });
     $('#shareWish').textContent = s.wish || t('ready');
     $('#shareName').textContent = s.name ? `— ${s.name} —` : '';
-    // Social networks are for 13+: children copy the link and ask a teacher or parent to share it.
+    // Social networks are for 13+: the note asks children to share with a teacher or parent.
     $('#shareKids').textContent = t('shareNote');
     $('#shareField').hidden = true;
+    prepareShare(s);
     $('#shareMain').textContent = own ? t('download') : t('makeYours');
     $('#shareBack').hidden = !own;
     $('#shareToField').hidden = false;
@@ -1364,6 +1361,7 @@
     if (step !== 2) selected = null;
     render();
     $('#panel').scrollTop = 0;
+    $('.editor').scrollTop = 0; // on phones the whole sheet scrolls
   }
 
   /** Notes a visit once per tab: 'open' for the page, 'play' for each child who starts building. */
@@ -1385,8 +1383,8 @@
     if (mode !== 'editor') selected = null;
     if (mode === 'intro') introStart = now();
     render();
+    document.querySelectorAll('.panel').forEach((p) => (p.scrollTop = 0));
     if (mode === 'editor') {
-      window.scrollTo({ top: 0 });
       $('#panelTitle').setAttribute('tabindex', '-1');
       $('#panelTitle').focus({ preventScroll: true });
     }
@@ -1488,7 +1486,7 @@
           step = 0;
           zoom = 1;
         });
-        window.history.replaceState(null, '', location.pathname + location.search);
+        window.history.replaceState(null, '', location.pathname);
         dialog.close();
       }, 'btn-gold btn-block'),
       button(t('cancel'), () => dialog.close(), 'btn-ghost btn-block')
@@ -1530,8 +1528,91 @@
 
   function makeYourOwn() {
     viewing = null;
-    window.history.replaceState(null, '', location.pathname + location.search);
+    window.history.replaceState(null, '', location.pathname);
     setMode('intro');
+  }
+
+  /* ----- Sharing: the pagoda's link, and a story picture ----- */
+
+  let shareLink = ''; // the link to the pagoda on show, once made
+  let shareAsk = 0;
+  let story = null; // Promise of the story picture (a File) for the pagoda on show
+  let storyTimer = 0;
+
+  /** Makes the link for the round buttons, and soon the story picture, so a tap can share at once. */
+  function prepareShare(s) {
+    const ask = ++shareAsk;
+    shareLink = '';
+    shareUrl(s)
+      .then((url) => {
+        if (ask !== shareAsk) return;
+        shareLink = url;
+        const link = encodeURIComponent(url);
+        $('#shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
+        $('#shareX').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(t('shareText'))}&url=${link}`;
+        $('#shareLine').href = `https://social-plugins.line.me/lineit/share?url=${link}`;
+      })
+      .catch(() => {});
+    $('#shareCopy').setAttribute('aria-label', t('share'));
+    $('#shareCopy').title = t('share');
+    scheduleStory();
+  }
+
+  /** (Re)makes the story picture in a moment, once the scene's pictures have had time to arrive. */
+  function scheduleStory() {
+    story = null;
+    clearTimeout(storyTimer);
+    storyTimer = setTimeout(() => {
+      if (mode === 'share' && !story) story = storyFile(shown()).catch(() => null);
+    }, 1200);
+  }
+
+  /** The pagoda's story picture: 9:16, with an invitation and the site's address, as a JPEG file. */
+  async function storyFile(s) {
+    await Promise.all([document.fonts.load('700 60px Mali', 'SANDSIAM สงกรานต์'), document.fonts.load('600 40px Mali', 'สงกรานต์')]);
+    if (lang === 'zh') await document.fonts.load('700 60px "ZCOOL KuaiLe"', '宋干节沙塔');
+    const image = await placeBackdropReady(s.place);
+    const out = document.createElement('canvas');
+    out.width = STORY.w;
+    out.height = STORY.h;
+    const c = out.getContext('2d');
+    renderScene(c, STORY.w, STORY.h, { state: s, image, exporting: true, insets: STORY.insets });
+    drawStoryCard(c, STORY.w, STORY.h, s, {
+      season: t('season'),
+      cta: t('storyCta'),
+      site: SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+    });
+    const blob = await new Promise((resolve) => out.toBlob(resolve, 'image/jpeg', 0.9));
+    return blob ? new File([blob], 'sandsiam-story.jpg', { type: 'image/jpeg' }) : null;
+  }
+
+  /**
+   * Shares the story picture. Phones and tablets open their share sheet, where Instagram and
+   * Facebook offer "Story"; elsewhere the picture is saved, to post from a phone.
+   */
+  async function shareStory() {
+    const button = $('#shareStory');
+    if (button.disabled) return;
+    Sound.play('tap');
+    button.disabled = true;
+    const file = await (story || (story = storyFile(shown()).catch(() => null)));
+    button.disabled = false;
+    if (!file) {
+      story = null;
+      toast(t('exportFail'));
+      return;
+    }
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] });
+      } catch (err) {
+        // Making the picture can use up the tap (Safari); it's ready for the next one.
+        if (err && err.name === 'NotAllowedError') toast(t('storyRetry'));
+        else if (!err || err.name !== 'AbortError') toast(t('exportFail'));
+      }
+      return;
+    }
+    saveFile(file, file.name, t('storySaved'));
   }
 
   /** Copies a link (shown in `field` too, for copying by hand when the clipboard is blocked). */
@@ -1576,30 +1657,33 @@
     }
   }
 
+  /** Saves a picture: through the Artifact viewer's downloads capability, or as a browser download. */
+  async function saveFile(blob, filename, done = t('exported')) {
+    const downloads = inArtifact ? await window.claude.use('downloads') : null;
+    if (downloads) {
+      try {
+        await downloads.save({ filename, data: blob });
+        toast(done);
+      } catch (err) {
+        toast(err && err.code === 'declined' ? t('downloadDeclined') : t('exportFail'));
+      }
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast(done);
+  }
+
   async function exportImage(s = state) {
     try {
       const out = await drawPicture(s);
-      out.toBlob(async (blob) => {
-        if (!blob) return toast(t('exportFail'));
-        // Inside the Artifact viewer, files are offered through the downloads capability.
-        const downloads = inArtifact ? await window.claude.use('downloads') : null;
-        if (downloads) {
-          try {
-            await downloads.save({ filename: 'sandsiam-songkran.png', data: blob });
-            toast(t('exported'));
-          } catch (err) {
-            toast(err && err.code === 'declined' ? t('downloadDeclined') : t('exportFail'));
-          }
-          return;
-        }
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'sandsiam-songkran.png';
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 30000);
-        toast(t('exported'));
-      }, 'image/png');
+      const blob = await new Promise((resolve) => out.toBlob(resolve, 'image/png'));
+      if (!blob) return toast(t('exportFail'));
+      await saveFile(blob, 'sandsiam-songkran.png');
     } catch {
       toast(t('exportFail'));
     }
@@ -1629,6 +1713,7 @@
   const assetArrived = () => {
     if (mode === 'editor' && step === 2) render();
     else draw();
+    if (mode === 'share') scheduleStory(); // the story picture should include it too
   };
   loadPlacePhotos(assetArrived);
   loadSceneAssets(assetArrived);
@@ -1648,7 +1733,8 @@
       const hero = $('.hero').getBoundingClientRect();
       return { top: hero.bottom - rect.top + 8, bottom, left: 40, right: 40 };
     }
-    if (mobile) return { top: 64, bottom: mode === 'share' ? 24 : 132, left: 12, right: 12 };
+    // On phones the sheet overlaps the scene's last 24px and undo / redo stand at the right edge.
+    if (mobile) return mode === 'share' ? { top: 64, bottom: 36, left: 12, right: 12 } : { top: 64, bottom: 40, left: 76, right: 76 };
     // While decorating, keep the pagoda clear of the layers panel docked on the right.
     const right = layersDocked() ? $('#layers').offsetWidth + 32 : 40;
     return { top: 80, bottom: mode === 'share' ? 40 : 96, left: mode === 'editor' ? 150 : 40, right };
@@ -1928,7 +2014,7 @@
     const own = !viewing;
     if (viewing) {
       viewing = null;
-      window.history.replaceState(null, '', location.pathname + location.search);
+      window.history.replaceState(null, '', location.pathname);
     }
     // After building, go to the field your own pagoda stands in.
     openField(place, own ? 'mine' : null);
@@ -1939,7 +2025,8 @@
     goTo(LAST_STEP);
   };
   $('#shareReplay').onclick = startReveal;
-  $('#shareCopy').onclick = () => share($('#shareField'), shareUrl(shown()));
+  $('#shareCopy').onclick = () => shareLink && share($('#shareField'), shareLink);
+  $('#shareStory').onclick = shareStory;
   $('#home').onclick = () => (viewing ? makeYourOwn() : setMode('intro'));
   document.querySelectorAll('.wordmark').forEach((link) => {
     link.onclick = (e) => {
@@ -2036,6 +2123,5 @@
   render();
   refreshCounts();
   logVisitOnce('open');
-  if (mode === 'share') startReveal();
-  if (shareError) toast(t('invalid'));
+  if (ShareLink.has(location)) openSharedLink();
 })();
