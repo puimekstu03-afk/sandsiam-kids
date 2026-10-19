@@ -18,17 +18,27 @@ function createSupabaseFieldStore(changed) {
   const DEVICE_KEY = 'sandsiam-me'; // same id as the local field, so "mine" carries over
   const REFRESH_MS = 30000;
 
+  /**
+   * This browser's id: kept in localStorage, else for this tab (sessionStorage), else for
+   * this visit only. Never a shared fallback id, or every such browser would overwrite
+   * the others' pagodas.
+   */
   function deviceId() {
-    try {
-      let id = localStorage.getItem(DEVICE_KEY);
-      if (!/^[a-z0-9-]{4,40}$/.test(id || '')) {
-        id = 'me-' + Math.random().toString(36).slice(2, 10);
-        localStorage.setItem(DEVICE_KEY, id);
+    const fresh = () => 'me-' + Array.from(crypto.getRandomValues(new Uint8Array(6)), (b) => b.toString(36).padStart(2, '0')).join('');
+    for (const storage of [() => localStorage, () => sessionStorage]) {
+      try {
+        const box = storage();
+        let id = box.getItem(DEVICE_KEY);
+        if (!/^[a-z0-9-]{4,40}$/.test(id || '')) {
+          id = fresh();
+          box.setItem(DEVICE_KEY, id);
+        }
+        return id;
+      } catch {
+        /* Blocked: try the next place. */
       }
-      return id;
-    } catch {
-      return 'me-guest';
     }
+    return fresh();
   }
 
   const device = deviceId();

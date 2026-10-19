@@ -23,6 +23,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Every push gives the page's CSS and JS links a new ?v=<commit>, so browsers fetch
+      # the new code at once instead of keeping yesterday's copy (no manual ?v= numbers).
+      - name: Stamp CSS and JS links with this commit
+        run: sed -i -E "s#\.(css|js)(\?v=[0-9a-z]+)?\"#.\1?v=${GITHUB_SHA::8}\"#g" public/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public

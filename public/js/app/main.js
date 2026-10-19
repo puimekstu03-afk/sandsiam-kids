@@ -22,6 +22,15 @@
   let mode = 'intro'; // 'intro' | 'editor' | 'share' | 'field'
   let viewing = null; // a friend's creation opened from a link; never saved over your own
   let lang = 'th';
+  /** The Chinese fonts' rules are long, so only 中文 readers load them (once). */
+  function addChineseFonts() {
+    if (document.getElementById('fontsZh')) return;
+    const link = document.createElement('link');
+    link.id = 'fontsZh';
+    link.rel = 'stylesheet';
+    link.href = 'css/base/fonts-zh.css';
+    document.head.append(link);
+  }
   let step = 0;
   let tab = 0;
   let color = ORIGINAL; // new pieces keep their picture's own colours until a colour is picked
@@ -75,9 +84,10 @@
   const shown = () => (mode === 'share' && viewing ? viewing : state);
 
   function shareUrl(s) {
-    if (inArtifact) return ARTIFACT_URL;
     const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(s))));
-    return location.origin + location.pathname + location.search + '#art=' + encoded;
+    const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|10\.|192\.168\.|\[::1\])/.test(location.hostname);
+    const base = inArtifact || local ? SITE_URL : location.origin + location.pathname + location.search;
+    return base + '#art=' + encoded;
   }
 
   function persist() {
@@ -247,6 +257,7 @@
 
   function renderStatic() {
     document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+    if (lang === 'zh') addChineseFonts();
     document.title = 'SANDSIAM · ' + t('tagline');
     document.querySelectorAll('[data-t]').forEach((node) => (node.textContent = t(node.dataset.t)));
 

@@ -11,8 +11,12 @@ const MAX_OBJECTS = 40;
 const LAST_STEP = 4;
 const ZOOM = { min: 0.7, max: 1.35, step: 0.1 };
 const PLACES = ['north', 'central', 'isan', 'east', 'south'];
-/** The published Artifact's own link, used for sharing (pages inside the viewer can't see it). */
-const ARTIFACT_URL = 'https://claude.ai/artifact/RV2q63U8BY5bct1DfHWLTa';
+/**
+ * The game's public home (GitHub Pages, .github/workflows/pages.yml). Shared links point here
+ * when the page can't use its own address: inside a claude.ai Artifact, or on a computer's
+ * own test server (localhost), which nobody else can open. Change it if the site moves.
+ */
+const SITE_URL = 'https://puimekstu03-afk.github.io/sandsiam-kids/';
 const INTRO_SLIDE = 6; // seconds each region stays on the intro screen
 const REVEAL_TIME = 2.6; // seconds for the pagoda to rise and decorations to pop in
 

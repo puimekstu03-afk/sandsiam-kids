@@ -45,7 +45,7 @@ const LocalFieldStore = (() => {
       }
       return id;
     } catch {
-      return 'me-guest';
+      return 'me-' + Math.random().toString(36).slice(2, 10); // this visit only, never a shared id
     }
   }
 
