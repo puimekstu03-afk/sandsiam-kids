@@ -83,11 +83,16 @@
   const snapshot = () => JSON.stringify(state);
   const shown = () => (mode === 'share' && viewing ? viewing : state);
 
+  /** This game's address for other people: the page's own, or SITE_URL where they couldn't open it. */
+  function pageUrl() {
+    const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|10\.|192\.168\.|\[::1\])/.test(location.hostname);
+    return inArtifact || local ? SITE_URL : location.origin + location.pathname + location.search;
+  }
+
+  /** A link that opens this pagoda in the celebration view. */
   function shareUrl(s) {
     const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(s))));
-    const local = !/^https?:$/.test(location.protocol) || /^(localhost|127\.|10\.|192\.168\.|\[::1\])/.test(location.hostname);
-    const base = inArtifact || local ? SITE_URL : location.origin + location.pathname + location.search;
-    return base + '#art=' + encoded;
+    return pageUrl() + '#art=' + encoded;
   }
 
   function persist() {
@@ -1317,9 +1322,9 @@
       : fill(t('sharedBy'), { name: s.name || t('friend'), place: placeLabel(s.place) });
     $('#shareWish').textContent = s.wish || t('ready');
     $('#shareName').textContent = s.name ? `— ${s.name} —` : '';
-    // Social networks are for 13+; children ask a teacher or parent to share instead.
-    $('#shareIcons').hidden = true;
+    // Social networks are for 13+: children copy the link and ask a teacher or parent to share it.
     $('#shareKids').textContent = t('shareNote');
+    $('#shareField').hidden = true;
     $('#shareMain').textContent = own ? t('download') : t('makeYours');
     $('#shareBack').hidden = !own;
     $('#shareToField').hidden = false;
@@ -1529,8 +1534,8 @@
     setMode('intro');
   }
 
-  async function share(field = $('#shareLink')) {
-    const url = shareUrl(state);
+  /** Copies a link (shown in `field` too, for copying by hand when the clipboard is blocked). */
+  async function share(field, url) {
     field.value = url;
     field.hidden = false;
     try {
@@ -1934,7 +1939,7 @@
     goTo(LAST_STEP);
   };
   $('#shareReplay').onclick = startReveal;
-  $('#shareCopy').onclick = () => share($('#shareField'));
+  $('#shareCopy').onclick = () => share($('#shareField'), shareUrl(shown()));
   $('#home').onclick = () => (viewing ? makeYourOwn() : setMode('intro'));
   document.querySelectorAll('.wordmark').forEach((link) => {
     link.onclick = (e) => {
@@ -1990,7 +1995,7 @@
     Sound.play('tap');
     if (mode === 'intro') requirePlayer(() => setMode('editor'));
   };
-  $('#teacherCopy').onclick = () => share($('#teacherLink'));
+  $('#teacherCopy').onclick = () => share($('#teacherLink'), pageUrl());
 
 
   $('#sound').onclick = () => {

@@ -86,46 +86,8 @@
   font-size: 0.9375rem;
 }
 
-.share-icons {
-  margin-top: var(--s-6);
-}
-
-.share-to {
-  margin-bottom: var(--s-3);
-  color: var(--text);
-  font: 700 1.0625rem var(--font-display);
-}
-
-.share-row {
-  display: flex;
-  gap: var(--s-3);
-}
-
-.social-btn {
-  display: grid;
-  place-items: center;
-  width: 50px;
-  height: 50px;
-  border: var(--outline);
-  border-radius: 50%;
-  color: #fff;
-  box-shadow: var(--pop-sm);
-}
-
-.social-btn svg {
-  width: 22px;
-  height: 22px;
-}
-
-.social-line { background: #06c755; }
-.social-facebook { background: #1877f2; }
-.social-x { background: var(--ink); }
-.social-copy { background: var(--pink); }
-
-.social-line svg path,
-.social-facebook svg path {
-  fill: currentColor;
-  stroke: none;
+.share-link {
+  margin-top: var(--s-4);
 }
 
 .share-actions {
