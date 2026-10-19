@@ -6,37 +6,32 @@
    ========================================================================== */
 
 @media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+  /* The scene stays put on top and only the sheet below it scrolls, so the pagoda is
+     always in view while choosing (or dragging) things from the sheet. */
   body {
-    overflow: auto;
+    --stage-h: 100dvh;
+    overflow: hidden;
   }
 
-  .is-intro {
-    overflow: hidden;
+  .is-editor {
+    --stage-h: max(280px, 44dvh);
+  }
+
+  .is-share {
+    --stage-h: max(320px, 52dvh);
+  }
+
+  .is-field {
+    --stage-h: max(340px, 54dvh);
   }
 
   .stage,
   .is-editor .stage,
-  .is-share .stage {
-    position: relative;
-    right: auto;
-    height: 100dvh;
-  }
-
-  .is-editor .stage {
-    height: 52dvh;
-    min-height: 320px;
-  }
-
-  .is-share .stage {
-    height: 56dvh;
-    min-height: 340px;
-  }
-
+  .is-share .stage,
   .is-field .stage {
     position: relative;
     right: auto;
-    height: 58dvh;
-    min-height: 360px;
+    height: var(--stage-h);
   }
 
   .topbar,
@@ -51,19 +46,29 @@
     display: none;
   }
 
-  /* Panel becomes a sheet under the scene. */
+  /* Panel becomes a sheet under the scene that scrolls on its own. */
   .panel,
   .share-view {
-    position: relative;
-    inset: auto;
+    position: fixed;
+    top: calc(var(--stage-h) - 24px);
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: var(--z-panel);
+    display: block;
     width: auto;
-    margin-top: -24px;
     border-width: 4px 0 0;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: 0 -4px 0 rgba(61, 44, 82, 0.15);
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     animation-name: sheet-in;
+  }
+
+  .share-body,
+  .field-body {
+    overflow: visible;
   }
 
   .panel-head {
@@ -98,13 +103,24 @@
     padding-bottom: max(var(--s-4), env(safe-area-inset-bottom, 0px));
   }
 
+  /* Undo and redo stand in a column at the right edge, leaving the middle to the pagoda. */
   .stage-tools {
-    bottom: var(--s-6);
+    top: auto;
+    right: var(--s-3);
+    bottom: calc(24px + var(--s-3));
+    left: auto;
+    flex-direction: column;
+    transform: none;
+  }
+
+  .stage-tools .tool-btn:has(.tool-label) {
+    min-width: 58px;
+    min-height: 54px;
   }
 
   .delete-btn {
     left: 50%;
-    bottom: calc(var(--s-6) + 76px);
+    bottom: calc(24px + var(--s-3));
     transform: translateX(-50%);
   }
 
@@ -157,13 +173,14 @@
   }
 
   .editor .guide-face {
-    width: 84px;
+    width: 64px;
     animation: none;
   }
 
   .editor .guide-bubble {
     margin-bottom: 0;
-    font-size: 1rem;
+    padding: var(--s-2) var(--s-3);
+    font-size: 0.9375rem;
     box-shadow: var(--pop-sm);
   }
 
@@ -435,5 +452,21 @@
   .icon-btn svg {
     width: 20px;
     height: 20px;
+  }
+
+  /* Keep the big title and the two buttons on one line each. */
+  .splash {
+    padding-right: var(--s-4);
+    padding-left: var(--s-4);
+  }
+
+  .hero-title-accent {
+    font-size: 1.625rem;
+  }
+
+  .hero-actions .btn-hero {
+    padding: 10px;
+    font-size: 1.0625rem;
+    white-space: nowrap;
   }
 }
