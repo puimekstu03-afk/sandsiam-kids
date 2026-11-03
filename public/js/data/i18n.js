@@ -99,7 +99,7 @@ const TRANSLATIONS = {
     // Step 3 · Decorate
     canvasHint: 'แตะของตกแต่ง แล้วลากเพื่อจัดวาง',
     tabs: ['ของบูชา', 'ดอกไม้', 'ของไทย', 'ของน่ารัก'],
-    items: ['ตุงยาว', 'ธงสามเหลี่ยม', 'ธงริ้ว', 'ดาวเรือง', 'ดอกบัว', 'พวงมาลัย', 'ประจำยาม', 'ลายดอกไม้', 'ลายเพชร', 'สร้อยดาวเรือง', 'ธูป', 'ดอกกุหลาบ', 'ดอกมะลิ', 'ดอกทานตะวัน', 'ดอกชบา', 'ดอกลีลาวดี', 'ดอกกล้วยไม้', 'ดอกเข็ม', 'ดอกดาวกระจาย', 'ฉัตร', 'เทียน', 'ธงชาติไทย', 'โคมล้านนา', 'ขันน้ำ', 'ปลาตะเพียน', 'ช้างน้อย', 'ดาว', 'หัวใจ', 'ผีเสื้อ', 'นกน้อย', 'เปลือกหอย', 'บานไม่รู้โรย', 'สร้อยมะลิ', 'สร้อยกุหลาบ', 'สร้อยบานไม่รู้โรย', 'สร้อยดอกเข็ม', 'สร้อยดาวเรืองสลับมะลิ', 'สร้อยดอกไม้หลากสี', 'สร้อยดาวกระจาย', 'สร้อยลีลาวดี'],
+    items: ['ตุงยาว', 'ธงสามเหลี่ยม', 'ธงริ้ว', 'ดาวเรือง', 'ดอกบัว', 'พวงมาลัย', 'ประจำยาม', 'ลายดอกไม้', 'ลายเพชร', 'สร้อยดาวเรือง', 'ธูป', 'ดอกกุหลาบ', 'ดอกมะลิ', 'ดอกทานตะวัน', 'ดอกชบา', 'ดอกลีลาวดี', 'ดอกกล้วยไม้', 'ดอกเข็ม', 'ดอกดาวกระจาย', 'ฉัตร', 'เทียน', 'ธงชาติไทย', 'โคมล้านนา', 'ขันน้ำ', 'ปลาตะเพียน', 'ช้างน้อย', 'ดาว', 'หัวใจ', 'ผีเสื้อ', 'นกน้อย', 'เปลือกหอย', 'บานไม่รู้โรย', 'สร้อยมะลิ', 'สร้อยกุหลาบ', 'สร้อยบานไม่รู้โรย', 'สร้อยดอกเข็ม', 'สร้อยดาวเรืองสลับมะลิ', 'สร้อยดอกไม้หลากสี', 'สร้อยดาวกระจาย', 'สร้อยลีลาวดี', 'ธงไต้หวัน', 'ธงสหราชอาณาจักร', 'ธงสหรัฐอเมริกา', 'ธงญี่ปุ่น', 'ธงจีน', 'ธงอินเดีย', 'ธงเกาหลีใต้', 'ธงเยอรมนี', 'ธงเมียนมา'],
     color: 'สีของตกแต่ง',
     newColor: 'สีของชิ้นใหม่',
     pickedColor: 'สีของชิ้นที่เลือก',
@@ -325,7 +325,7 @@ const TRANSLATIONS = {
     // Step 3 · Decorate
     canvasHint: 'Select a decoration, then drag to arrange',
     tabs: ['Offerings', 'Flowers', 'Thai things', 'Cute things'],
-    items: ['Long tung', 'Triangle flag', 'Streamers', 'Marigold', 'Lotus', 'Garland', 'Four-petal motif', 'Floral motif', 'Diamond', 'Marigold ring', 'Incense', 'Rose', 'Jasmine', 'Sunflower', 'Hibiscus', 'Plumeria', 'Orchid', 'Ixora', 'Cosmos', 'Tiered umbrella', 'Candle', 'Thai flag', 'Lanna lantern', 'Water bowl', 'Woven fish', 'Little elephant', 'Star', 'Heart', 'Butterfly', 'Little bird', 'Seashell', 'Globe amaranth', 'Jasmine ring', 'Rose ring', 'Globe amaranth ring', 'Ixora ring', 'Marigold and jasmine ring', 'Rainbow flower ring', 'Cosmos ring', 'Plumeria ring'],
+    items: ['Long tung', 'Triangle flag', 'Streamers', 'Marigold', 'Lotus', 'Garland', 'Four-petal motif', 'Floral motif', 'Diamond', 'Marigold ring', 'Incense', 'Rose', 'Jasmine', 'Sunflower', 'Hibiscus', 'Plumeria', 'Orchid', 'Ixora', 'Cosmos', 'Tiered umbrella', 'Candle', 'Thai flag', 'Lanna lantern', 'Water bowl', 'Woven fish', 'Little elephant', 'Star', 'Heart', 'Butterfly', 'Little bird', 'Seashell', 'Globe amaranth', 'Jasmine ring', 'Rose ring', 'Globe amaranth ring', 'Ixora ring', 'Marigold and jasmine ring', 'Rainbow flower ring', 'Cosmos ring', 'Plumeria ring', 'Taiwan flag', 'UK flag', 'US flag', 'Japan flag', 'China flag', 'India flag', 'South Korea flag', 'Germany flag', 'Myanmar flag'],
     color: 'Decoration color',
     newColor: 'Colour for new pieces',
     pickedColor: 'Colour of the chosen piece',
@@ -551,7 +551,7 @@ const TRANSLATIONS = {
     // Step 3 · Decorate
     canvasHint: '选中装饰后，拖动以调整位置',
     tabs: ['供品', '鲜花', '泰式小物', '可爱小物'],
-    items: ['长幡', '三角旗', '彩带', '万寿菊', '莲花', '花环', '四瓣纹', '花卉纹', '菱形纹', '万寿菊花环', '香', '玫瑰', '茉莉花', '向日葵', '扶桑花', '鸡蛋花', '兰花', '龙船花', '波斯菊', '华盖伞', '蜡烛', '泰国国旗', '兰纳灯笼', '水钵', '编织鱼', '小象', '星星', '爱心', '蝴蝶', '小鸟', '贝壳', '千日红', '茉莉花环', '玫瑰花环', '千日红花环', '龙船花花环', '万寿菊茉莉花环', '彩色花环', '波斯菊花环', '鸡蛋花花环'],
+    items: ['长幡', '三角旗', '彩带', '万寿菊', '莲花', '花环', '四瓣纹', '花卉纹', '菱形纹', '万寿菊花环', '香', '玫瑰', '茉莉花', '向日葵', '扶桑花', '鸡蛋花', '兰花', '龙船花', '波斯菊', '华盖伞', '蜡烛', '泰国国旗', '兰纳灯笼', '水钵', '编织鱼', '小象', '星星', '爱心', '蝴蝶', '小鸟', '贝壳', '千日红', '茉莉花环', '玫瑰花环', '千日红花环', '龙船花花环', '万寿菊茉莉花环', '彩色花环', '波斯菊花环', '鸡蛋花花环', '台湾旗', '英国国旗', '美国国旗', '日本国旗', '中国国旗', '印度国旗', '韩国国旗', '德国国旗', '缅甸国旗'],
     color: '装饰颜色',
     newColor: '新装饰的颜色',
     pickedColor: '所选装饰的颜色',

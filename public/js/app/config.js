@@ -25,7 +25,7 @@ const REVEAL_TIME = 2.6; // seconds for the pagoda to rise and decorations to po
  * flags & offerings · flowers · Thai things · cute things.
  */
 const TAB_ITEMS = [
-  [0, 1, 2, 21, 19, INCENSE, 20, 22],
+  [0, 1, 2, 21, 40, 41, 42, 43, 44, 45, 46, 47, 48, 19, INCENSE, 20, 22],
   [3, 4, 11, 12, 13, 14, 15, 16, 31, 17, 18, 5, RING, 36, 32, 33, 34, 35, 38, 39, 37],
   [6, 7, 8, 23, 24, 25],
   [26, 27, 28, 29, 30],

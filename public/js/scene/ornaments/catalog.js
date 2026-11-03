@@ -19,7 +19,7 @@
  *            out; null when only its white or grey part takes the colour)
  *   tint   — its white ('white': petals), cream ('cream': wax) or grey ('grey': silver, skin) part takes on the
  *            picked colour too, keeping its light and shade
- *   fixed  — keeps its own colours (the Thai flag, the rainbow ring); no palette is offered
+ *   fixed  — keeps its own colours (national flags, the rainbow ring); no palette is offered
  *   glow   — a soft light that flickers: [x, y] as fractions of the picture
  *   ring   — a flower ring round a tier, strung from these flower heads in turn
  *            (assets/ornaments/ring-<flower>.webp); it has no picture of its own
@@ -69,6 +69,16 @@ const ORNAMENTS = [
   { key: 'ringRainbow', h: 26, ring: ['marigold', 'rose', 'jasmine', 'ixora', 'cosmos', 'globeAmaranth', 'plumeria'], fixed: true }, // 37
   { key: 'ringCosmos', h: 26, ring: ['cosmos'], hue: 335 }, // 38
   { key: 'ringPlumeria', h: 26, ring: ['plumeria'], hue: 48, tint: 'white' }, // 39
+  // National flags on the Thai flag's pole (drawn in tools/flags/flags.html, saved by tools/flags/render.py).
+  { key: 'flag-taiwan', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 40
+  { key: 'flag-uk', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 41
+  { key: 'flag-usa', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 42
+  { key: 'flag-japan', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 43
+  { key: 'flag-china', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 44
+  { key: 'flag-india', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 45
+  { key: 'flag-korea', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 46
+  { key: 'flag-germany', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 47
+  { key: 'flag-myanmar', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 48
 ];
 
 /** Until its picture arrives, a decoration takes up a box this wide for its height. */

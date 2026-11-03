@@ -1,0 +1,205 @@
+<!doctype html>
+<!--
+  SANDSIAM · National flags on a pole, in the same cartoon look as the Thai flag.
+
+  Each flag is drawn flat from its official proportions (SVG below), bent into a wave with
+  light and shade and a dark outline, and set on the Thai flag's own pole
+  (public/assets/ornaments/thaiFlag.webp), so every flag matches it.
+  Open flags.html?f=<key> to see one; tools/flags/render.py saves them all as decorations.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SANDSIAM flags</title>
+<style>
+  html, body { margin: 0; background: transparent; }
+  canvas { display: block; width: 219px; height: 640px; }
+</style>
+</head>
+<body>
+<canvas id="out" width="438" height="1280"></canvas>
+<img id="pole" src="../../public/assets/ornaments/thaiFlag.webp" hidden alt="">
+<script>
+'use strict';
+
+/** A five-pointed star (or n-pointed), its first point at `angle` (radians, 0 = right). */
+function star(cx, cy, outer, inner, points = 5, angle = -Math.PI / 2) {
+  const pts = [];
+  for (let i = 0; i < points * 2; i++) {
+    const r = i % 2 ? inner : outer;
+    const a = angle + (i * Math.PI) / points;
+    pts.push(`${(cx + r * Math.cos(a)).toFixed(3)},${(cy + r * Math.sin(a)).toFixed(3)}`);
+  }
+  return `M${pts.join('L')}Z`;
+}
+
+/** Every flag: [width, height] of its viewBox (its true proportions) and its drawing. */
+const FLAGS = {
+  // Taiwan: a white sun with twelve rays on a blue canton, on red.
+  taiwan: [240, 160, `
+    <rect width="240" height="160" fill="#fe0000"/>
+    <rect width="120" height="80" fill="#000095"/>
+    <path d="${star(60, 40, 30, 16.5, 12)}" fill="#fff"/>
+    <circle cx="60" cy="40" r="17" fill="#000095"/>
+    <circle cx="60" cy="40" r="15" fill="#fff"/>`],
+
+  // United Kingdom: the Union Flag.
+  uk: [60, 30, `
+    <clipPath id="t"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath>
+    <rect width="60" height="30" fill="#012169"/>
+    <path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/>
+    <path d="M0,0L60,30M60,0L0,30" clip-path="url(#t)" stroke="#c8102e" stroke-width="4"/>
+    <path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/>
+    <path d="M30,0v30M0,15h60" stroke="#c8102e" stroke-width="6"/>`],
+
+  // United States: 13 stripes and 50 stars.
+  usa: [7410, 3900, (() => {
+    let s = '<rect width="7410" height="3900" fill="#fff"/>';
+    for (let i = 0; i < 13; i += 2) s += `<rect y="${i * 300}" width="7410" height="300" fill="#b22234"/>`;
+    s += '<rect width="2964" height="2100" fill="#3c3b6e"/>';
+    for (let row = 0; row < 9; row++) {
+      const even = row % 2 === 0;
+      for (let col = 0; col < (even ? 6 : 5); col++) {
+        s += `<path d="${star(247 * (even ? 2 * col + 1 : 2 * col + 2), 210 * (row + 1), 120, 46)}" fill="#fff"/>`;
+      }
+    }
+    return s;
+  })()],
+
+  // Japan: a red sun on white.
+  japan: [900, 600, `
+    <rect width="900" height="600" fill="#fff"/>
+    <circle cx="450" cy="300" r="180" fill="#bc002d"/>`],
+
+  // China: one large and four small yellow stars on red, the small ones facing the large one.
+  china: [30, 20, `
+    <rect width="30" height="20" fill="#ee1c25"/>
+    <path d="${star(5, 5, 3, 1.15)}" fill="#ffde00"/>
+    ${[[10, 2], [12, 4], [12, 7], [10, 9]].map(([x, y]) => `<path d="${star(x, y, 1, 0.38, 5, Math.atan2(5 - y, 5 - x))}" fill="#ffde00"/>`).join('')}`],
+
+  // India: saffron, white and green, with the 24-spoked Ashoka Chakra.
+  india: [900, 600, `
+    <rect width="900" height="200" fill="#ff9933"/>
+    <rect y="200" width="900" height="200" fill="#fff"/>
+    <rect y="400" width="900" height="200" fill="#138808"/>
+    <g transform="translate(450,300)" stroke="#000080" fill="none">
+      <circle r="70" stroke-width="10"/>
+      ${Array.from({ length: 24 }, (_, i) => `<path d="M0,0L0,-66" stroke-width="4" transform="rotate(${i * 15})"/>`).join('')}
+      <circle r="14" fill="#000080" stroke="none"/>
+    </g>`],
+
+  // South Korea: the red and blue taegeuk with four black trigrams, on white.
+  korea: [72, 48, `
+    <g transform="translate(36,24)">
+      <rect x="-36" y="-24" width="72" height="48" fill="#fff"/>
+      <g transform="rotate(-56.3099325)">
+        <g id="b2"><path id="b" d="M-6-26H6v2H-6zm0 3H6v2H-6zm0 3H6v2H-6z"/><use href="#b" y="44"/></g>
+        <path stroke="#fff" d="M0,17v10"/>
+        <path fill="#cd2e3a" d="M0-12A12 12 0 0 1 0 12z"/>
+        <path fill="#0047a0" d="M0-12A12 12 0 0 0 0 12 6 6 0 0 0 0 0z"/>
+        <circle cy="-6" fill="#cd2e3a" r="6"/>
+      </g>
+      <g transform="rotate(-123.6900675)">
+        <use href="#b2"/>
+        <path stroke="#fff" d="M0-23.5v3M0,17v3.5M0,23.5v3"/>
+      </g>
+    </g>`],
+
+  // Germany: black, red and gold.
+  germany: [5, 3, `
+    <rect width="5" height="1" fill="#000"/>
+    <rect y="1" width="5" height="1" fill="#dd0000"/>
+    <rect y="2" width="5" height="1" fill="#ffce00"/>`],
+
+  // Myanmar: yellow, green and red, with a large white star.
+  myanmar: [18, 12, `
+    <rect width="18" height="4" fill="#fecb00"/>
+    <rect y="4" width="18" height="4" fill="#34b233"/>
+    <rect y="8" width="18" height="4" fill="#ea2839"/>
+    <path d="${star(9, 6.8, 4.4, 1.68)}" fill="#fff"/>`],
+};
+
+const INK = '#3b2b2e'; // the dark outline of the Thai flag picture
+const POLE_EDGE = 72; // the pole is everything left of this (at 2×), and the ball above TOP
+const TOP = 104;
+const CLEAN_ROW = 330; // a row of bare pole (at 1×), below where the Thai flag's cloth tints it
+const POLE_END = 600; // down to here the pole is rebuilt from that row
+const FLAG_X = 70; // where the cloth starts, tucked behind the pole
+const FLAG_Y = 116;
+const FLAG_W = 340; // the Thai flag's width; each flag keeps its own proportions
+const MAX_H = 300;
+
+const loadImage = (src) => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = src;
+});
+
+async function draw(key) {
+  const [vw, vh, body] = FLAGS[key];
+  const w = FLAG_W;
+  const h = Math.min(MAX_H, Math.round((w * vh) / vw));
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vw} ${vh}" width="${w}" height="${h}" preserveAspectRatio="none">${body}</svg>`;
+  const flat = await loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
+
+  const out = document.getElementById('out');
+  const c = out.getContext('2d');
+  const cloth = document.createElement('canvas');
+  cloth.width = out.width;
+  cloth.height = out.height;
+  const g = cloth.getContext('2d');
+
+  // The wave: still at the pole, rippling more towards the free end.
+  const wave = (x) => {
+    const t = x / w;
+    return 13 * Math.pow(t, 0.75) * Math.sin(2 * Math.PI * 1.15 * t);
+  };
+  const slope = (x) => {
+    const t = x / w;
+    return Math.pow(t, 0.75) * Math.cos(2 * Math.PI * 1.15 * t);
+  };
+  for (let x = 0; x < w; x++) g.drawImage(flat, x, 0, 1, h, FLAG_X + x, FLAG_Y + wave(x), 1, h);
+
+  // Light on the folds that face up, shade in the ones that turn away.
+  g.globalCompositeOperation = 'source-atop';
+  for (let x = 0; x < w; x++) {
+    const k = slope(x);
+    g.fillStyle = k > 0 ? `rgba(255,255,255,${(0.2 * k).toFixed(3)})` : `rgba(40,20,30,${(-0.24 * k).toFixed(3)})`;
+    g.fillRect(FLAG_X + x, 0, 1, out.height);
+  }
+  g.globalCompositeOperation = 'source-over';
+
+  // The cartoon outline round the cloth.
+  g.beginPath();
+  for (let x = 0; x <= w; x++) g.lineTo(FLAG_X + x, FLAG_Y + wave(x));
+  for (let x = w; x >= 0; x--) g.lineTo(FLAG_X + x, FLAG_Y + h + wave(x));
+  g.closePath();
+  g.lineWidth = 6;
+  g.lineJoin = 'round';
+  g.strokeStyle = INK;
+  g.stroke();
+
+  // The Thai flag's pole goes in front of the cloth's edge.
+  const pole = document.createElement('canvas');
+  pole.width = out.width;
+  pole.height = out.height;
+  const p = pole.getContext('2d');
+  const thai = document.getElementById('pole');
+  p.drawImage(thai, 0, 0, out.width, out.height);
+  // Where the Thai cloth hung, its red reflects on the pole: rebuild that stretch from bare pole.
+  p.clearRect(0, TOP, POLE_EDGE, POLE_END - TOP);
+  for (let y = TOP; y < POLE_END; y++) p.drawImage(thai, 0, CLEAN_ROW, POLE_EDGE / 2, 1, 0, y, POLE_EDGE, 1);
+  p.globalCompositeOperation = 'destination-out';
+  p.fillRect(POLE_EDGE, TOP, out.width, out.height);
+
+  c.clearRect(0, 0, out.width, out.height);
+  c.drawImage(cloth, 0, 0);
+  c.drawImage(pole, 0, 0);
+  document.title = 'ready ' + key;
+}
+
+window.addEventListener('load', () => draw(new URLSearchParams(location.search).get('f') || 'taiwan'));
+</script>
+</body>
+</html>
