@@ -105,6 +105,9 @@ function createSupabaseFieldStore(changed) {
       return res;
     },
 
+    /** One pagoda by its public id (from a shared link): { state, name, wish, … }, or null. */
+    card: (id) => rpc('field_card', { p_id: id }),
+
     async count(places) {
       const c = await rpc('field_counts');
       return {

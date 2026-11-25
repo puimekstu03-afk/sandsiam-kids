@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [{ "source": "/p/:id", "destination": "/api/card?id=:id" }],
+  "redirects": [{ "source": "/", "destination": "https://puimekstu03-afk.github.io/sandsiam-kids/", "permanent": false }]
+}

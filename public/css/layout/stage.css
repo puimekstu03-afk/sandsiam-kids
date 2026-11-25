@@ -186,10 +186,12 @@
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  max-width: calc(100% - var(--s-6));
+  width: max-content;
+  /* Centred, so it keeps clear of the folded layers button on both sides. */
+  max-width: calc(100% - (var(--edge) + 62px) * 2);
   padding: var(--s-2) var(--s-4);
   border: var(--outline);
-  border-radius: 999px;
+  border-radius: 38px;
   background: var(--white);
   box-shadow: var(--pop);
   /* Centred with `translate` so the pop-in animation's `transform` can't shift it. */
@@ -197,8 +199,10 @@
   animation: pop-in 0.25s var(--ease-out);
 }
 
+/* Where there is no room for one row, the colours take two. */
 .pick-palette .swatches {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--s-2);
 }
 

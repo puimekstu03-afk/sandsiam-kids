@@ -21,6 +21,8 @@
   let state = defaults();
   let mode = 'intro'; // 'intro' | 'editor' | 'share' | 'field'
   let viewing = null; // a friend's creation opened from a link; never saved over your own
+  let viewingId = null; // its id in the field, when it came from there
+  let offered = null; // { id, work }: the pagoda this tab last put in the field, as it was
   let lang = 'th';
   /** The Chinese fonts' rules are long, so only 中文 readers load them (once). */
   function addChineseFonts() {
@@ -76,14 +78,32 @@
     return inArtifact || local ? SITE_URL : location.origin + location.pathname;
   }
 
-  /** A link that opens this pagoda in the celebration view (share-link.js). */
-  const shareUrl = async (s) => pageUrl() + (await ShareLink.encode(s));
+  /** The field id of the pagoda on show: a friend's, or your own while it is still as you offered it. */
+  function shownId() {
+    if (viewing) return viewingId;
+    return offered && offered.work === snapshot() ? offered.id : null;
+  }
+
+  /**
+   * A link that opens this pagoda in the celebration view. One in the field goes through the
+   * share server, so its own picture shows under the link; otherwise the link carries the
+   * pagoda itself (share-link.js).
+   */
+  async function shareUrl(s) {
+    const id = shownId();
+    if (SHARE_URL && ShareLink.isId(id)) return `${SHARE_URL}/p/${id}`;
+    return pageUrl() + (await ShareLink.encode(s));
+  }
 
   /** A shared creation (from this page's address) opens in the celebration view, kept apart from your own work. */
   async function openSharedLink() {
     try {
-      viewing = validate(await ShareLink.decode(location));
+      const id = ShareLink.id(location);
+      const card = id && (await fieldStore.card(id));
+      viewing = card ? { ...validate(card.state), name: card.name, wish: card.wish } : validate(await ShareLink.decode(location));
+      viewingId = card ? id : null;
     } catch {
+      viewing = null;
       toast(t('invalid'));
       return;
     }
@@ -290,8 +310,11 @@
 
   // On phones and upright tablets the panel sits under the scene (css/responsive/phone.css),
   // and the guide sits in it, above the step title, so it never covers the pagoda.
-  const STACKED_QUERY = '(max-width: 760px), (max-width: 1100px) and (orientation: portrait)';
+  const STACKED_QUERY = '(max-width: 760px) and (min-height: 501px), (max-width: 1100px) and (orientation: portrait)';
   const stackedQuery = window.matchMedia(STACKED_QUERY);
+  // Phones on their side: keep in step with responsive/short.css.
+  const SHORT_QUERY = '(max-height: 500px) and (orientation: landscape)';
+  const shortQuery = window.matchMedia(SHORT_QUERY);
   function placeGuide() {
     const guide = $('#guide');
     if (stackedQuery.matches) $('.editor').insertBefore(guide, $('.editor-head'));
@@ -711,6 +734,7 @@
     if (!entry.example) {
       card.append(button(t('viewThis'), () => {
         viewing = entry.state;
+        viewingId = entry.id;
         setMode('share');
         startReveal();
       }, 'btn-outline btn-block'));
@@ -778,11 +802,12 @@
     showOffering(true);
     try {
       const picture = await pictureBlob(state);
-      const work = JSON.parse(snapshot());
+      const work = snapshot();
       const player = Players.current()?.id || 'guest';
       for (let tries = 0; ; tries++) {
         try {
-          await fieldStore.offer(work, player, picture);
+          const entry = await fieldStore.offer(JSON.parse(work), player, picture);
+          offered = { id: entry.id, work };
           break;
         } catch (err) {
           // 'busy': the whole field is busy · 'wait': many offers from this school's address
@@ -996,18 +1021,22 @@
   let layerDrag = null;
 
   const layersShown = () => mode === 'editor' && step === 2;
-  const layersDocked = () => layersShown() && !stackedQuery.matches;
+  // On phones (upright or on their side) the list sits in the panel instead.
+  const layersInPanel = () => stackedQuery.matches || shortQuery.matches;
+  const layersDocked = () => layersShown() && !layersInPanel();
 
   function placeLayers() {
     const layers = $('#layers');
-    if (stackedQuery.matches) $('.editor').insertBefore(layers, $('.editor-foot'));
+    if (layersInPanel()) $('.editor').insertBefore(layers, $('.editor-foot'));
     else $('.stage').insertBefore(layers, $('#stickerPop'));
   }
-  stackedQuery.addEventListener('change', () => {
-    placeLayers();
-    renderLayers();
-    draw();
-  });
+  [stackedQuery, shortQuery].forEach((query) =>
+    query.addEventListener('change', () => {
+      placeLayers();
+      renderLayers();
+      draw();
+    }),
+  );
   placeLayers();
 
   function renderLayers() {
@@ -1520,6 +1549,7 @@
   /** Opens the celebration view and plays the pagoda rising out of the sand. */
   function openShare() {
     viewing = null;
+    viewingId = null;
     setMode('share');
     startReveal();
   }
@@ -1533,6 +1563,7 @@
 
   function makeYourOwn() {
     viewing = null;
+    viewingId = null;
     window.history.replaceState(null, '', location.pathname);
     setMode('intro');
   }
@@ -1572,10 +1603,18 @@
     }, 1200);
   }
 
-  /** The pagoda's story picture: 9:16, with an invitation and the site's address, as a JPEG file. */
-  async function storyFile(s) {
+  /** The fonts a kept picture is lettered in (a canvas doesn't wait for them by itself). */
+  async function loadPictureFonts() {
     await Promise.all([document.fonts.load('700 60px Mali', 'SANDSIAM สงกรานต์'), document.fonts.load('600 40px Mali', 'สงกรานต์')]);
     if (lang === 'zh') await document.fonts.load('700 60px "ZCOOL KuaiLe"', '宋干节沙塔');
+  }
+
+  /** The game's address as people would type it. */
+  const siteName = () => SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+  /** The pagoda's story picture: 9:16, with an invitation and the site's address, as a JPEG file. */
+  async function storyFile(s) {
+    await loadPictureFonts();
     const image = await placeBackdropReady(s.place);
     const out = document.createElement('canvas');
     out.width = STORY.w;
@@ -1585,7 +1624,7 @@
     drawStoryCard(c, STORY.w, STORY.h, s, {
       season: t('season'),
       cta: t('storyCta'),
-      site: SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+      site: siteName(),
     });
     const blob = await new Promise((resolve) => out.toBlob(resolve, 'image/jpeg', 0.9));
     return blob ? new File([blob], 'sandsiam-story.jpg', { type: 'image/jpeg' }) : null;
@@ -1649,12 +1688,26 @@
     return out;
   }
 
-  /** A smaller JPEG of the pagoda for the field's picture store (the server takes up to 400 KB); null if it fails. */
+  /**
+   * The pagoda's own share card for the field's picture store: a 1200 × 630 JPEG (the server
+   * takes up to 400 KB), shown under its shared link; null if it fails.
+   */
   async function pictureBlob(s) {
     try {
-      const out = await drawPicture(s, 960, 840);
+      await loadPictureFonts();
+      const image = await placeBackdropReady(s.place);
+      const out = document.createElement('canvas');
+      out.width = SHARE_CARD.w;
+      out.height = SHARE_CARD.h;
+      const c = out.getContext('2d');
+      renderScene(c, SHARE_CARD.w, SHARE_CARD.h, { state: s, image, exporting: true, insets: SHARE_CARD.insets });
+      drawShareCard(c, SHARE_CARD.w, SHARE_CARD.h, s, {
+        title: s.name ? fill(t('cardTitle'), { name: s.name }) : t('untitled'),
+        season: t('season'),
+        site: siteName(),
+      });
       const jpeg = (quality) => new Promise((resolve) => out.toBlob(resolve, 'image/jpeg', quality));
-      let blob = await jpeg(0.82);
+      let blob = await jpeg(0.84);
       if (blob && blob.size > 380 * 1024) blob = await jpeg(0.6);
       return blob && blob.size <= 380 * 1024 ? blob : null;
     } catch {
@@ -1740,6 +1793,7 @@
     }
     // On phones the sheet overlaps the scene's last 24px and undo / redo stand at the right edge.
     if (mobile) return mode === 'share' ? { top: 64, bottom: 36, left: 12, right: 12 } : { top: 64, bottom: 40, left: 76, right: 76 };
+    if (shortQuery.matches) return { top: 58, bottom: mode === 'editor' ? 64 : 20, left: 24, right: 24 };
     // While decorating, keep the pagoda clear of the layers panel docked on the right.
     const right = layersDocked() ? $('#layers').offsetWidth + 32 : 40;
     return { top: 80, bottom: mode === 'share' ? 40 : 96, left: mode === 'editor' ? 150 : 40, right };
@@ -2019,6 +2073,7 @@
     const own = !viewing;
     if (viewing) {
       viewing = null;
+      viewingId = null;
       window.history.replaceState(null, '', location.pathname);
     }
     // After building, go to the field your own pagoda stands in.

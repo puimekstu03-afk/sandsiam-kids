@@ -1,0 +1,206 @@
+/* ==========================================================================
+   SANDSIAM Kids · Phones on their side: very little height, so the panel stays beside the
+   scene, scrolls as one sheet, and everything around it gets smaller.
+   Keep the query in step with SHORT_QUERY in js/app/main.js.
+   ========================================================================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --panel-w: min(25rem, 48vw);
+    --gap: 6px;
+    --edge: 10px;
+    --topbar-h: 54px;
+  }
+
+  .topbar {
+    padding-left: max(var(--edge), env(safe-area-inset-left, 0px));
+  }
+
+  .icon-btn,
+  .player-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .lang-btn {
+    width: auto;
+    padding: 0 var(--s-2);
+  }
+
+  .lang-btn .icon,
+  .lang-btn > svg {
+    display: none;
+  }
+
+  .player-btn {
+    padding: 0;
+    justify-content: center;
+  }
+
+  .player-btn span,
+  .scene-note {
+    display: none;
+  }
+
+  .topbar-icons,
+  .topbar-right {
+    gap: 4px;
+  }
+
+  /* The whole panel scrolls; only back / next stay in view. */
+  .panel,
+  .share-view {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--radius);
+  }
+
+  .editor-body,
+  .share-body,
+  .field-body {
+    overflow: visible;
+  }
+
+  .panel-head {
+    padding: var(--s-2) var(--s-3) 0;
+  }
+
+  .panel-head .wordmark,
+  .editor-head p,
+  .step-name,
+  .step > span:not(.step-number) {
+    display: none;
+  }
+
+  .steps {
+    margin-top: 0;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+  }
+
+  .step-number svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .editor-head {
+    padding: var(--s-1) var(--s-3) var(--s-2);
+  }
+
+  .editor-head h2,
+  .share-view h2,
+  .field-body h2 {
+    margin-top: var(--s-1);
+    font-size: 1.125rem;
+  }
+
+  .editor-body {
+    padding: 0 var(--s-3) var(--s-3);
+  }
+
+  .share-body,
+  .field-body {
+    padding: var(--s-3);
+  }
+
+  .share-wish {
+    margin-top: var(--s-3);
+    padding: var(--s-3);
+  }
+
+  .editor-foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    padding: 6px var(--s-3);
+  }
+
+  .editor-foot > * {
+    min-height: 42px;
+    padding: 4px 14px;
+    font-size: 1rem;
+  }
+
+  /* Over the scene: no guide (its tips are on the panel), small round tools. */
+  .is-editor .stage > .guide {
+    display: none;
+  }
+
+  .stage-tools {
+    left: max(var(--edge), env(safe-area-inset-left, 0px));
+    transform: none;
+  }
+
+  .tool-label {
+    display: none;
+  }
+
+  .tool-btn:has(.tool-label) {
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .delete-btn {
+    left: calc(max(var(--edge), env(safe-area-inset-left, 0px)) + 108px);
+    bottom: calc(var(--edge) + 4px);
+    max-width: calc(100% - 118px - var(--edge) * 2);
+    overflow: hidden;
+    padding: var(--s-1) var(--s-3);
+    font-size: 0.9375rem;
+    text-overflow: ellipsis;
+  }
+
+  .flip-btn {
+    left: max(var(--edge), env(safe-area-inset-left, 0px));
+    bottom: calc(var(--edge) + 62px);
+  }
+
+  .pick-palette {
+    top: calc(var(--topbar-h) + 2px);
+    max-width: calc(100% - var(--s-3));
+    padding: 5px var(--s-2);
+  }
+
+  .pick-label {
+    display: none;
+  }
+
+  .pick-palette .swatch {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pick-palette .swatches {
+    gap: 6px;
+  }
+
+  /* The layers list sits in the panel, above back / next, as on upright phones. */
+  .editor .layers {
+    position: static;
+    width: auto;
+    margin: 0 var(--s-3) var(--s-3);
+    animation: none;
+  }
+
+  .editor .layers-body {
+    overflow: visible;
+  }
+
+  /* Messages appear at the bottom, so they never cover the colours. */
+  .is-editor #toast,
+  .is-share #toast,
+  .is-field #toast {
+    top: auto;
+    bottom: 64px;
+    padding: var(--s-1) var(--s-4);
+    font-size: 0.9375rem;
+  }
+}

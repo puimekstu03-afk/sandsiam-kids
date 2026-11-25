@@ -7,6 +7,9 @@
  * compressed, so even 40 decorations fit a short link (about 1.5 KB) that Facebook, X and
  * LINE accept. A browser without CompressionStream writes ?art=<plain data> instead, and
  * links from before (#art=…) still open. The data is checked with validate() before use.
+ *
+ * A pagoda in the field has a shorter link, <page>?id=<its public id>: the share server
+ * (share-server/) sends visitors there after showing its picture to Facebook, X and LINE.
  */
 const ShareLink = (() => {
   const MAX = 24000;
@@ -24,7 +27,18 @@ const ShareLink = (() => {
     return null;
   }
 
+  const ID = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
+
   return {
+    /** Whether this is the public id of a pagoda in the field. */
+    isId: (id) => ID.test(id || ''),
+
+    /** The field pagoda this address opens, or null. */
+    id(loc) {
+      const id = new URLSearchParams(loc.search).get('id');
+      return ID.test(id || '') ? id : null;
+    },
+
     /** The part to add to the page's address, e.g. "?p=…". */
     async encode(state) {
       const bytes = new TextEncoder().encode(compact(state));
@@ -34,7 +48,7 @@ const ShareLink = (() => {
 
     /** Whether this address opens a shared pagoda. */
     has(loc) {
-      return find(loc) !== null;
+      return find(loc) !== null || new URLSearchParams(loc.search).has('id');
     },
 
     /** The shared pagoda in this address (not yet validated); throws when it is broken. */

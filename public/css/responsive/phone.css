@@ -5,7 +5,7 @@
    Keep the query in step with STACKED_QUERY in js/app/main.js.
    ========================================================================== */
 
-@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
+@media (max-width: 760px) and (min-height: 501px), (max-width: 1100px) and (orientation: portrait) {
   /* The scene stays put on top and only the sheet below it scrolls, so the pagoda is
      always in view while choosing (or dragging) things from the sheet. */
   body {
@@ -118,31 +118,26 @@
     min-height: 54px;
   }
 
+  /* Remove ends just before undo / redo (a column about 78px wide at the right edge), and flip
+     starts at the left edge, so the two never meet or slip under the column. */
   .delete-btn {
-    left: 50%;
+    left: auto;
+    right: calc(var(--s-3) + 78px);
     bottom: calc(24px + var(--s-3));
-    transform: translateX(-50%);
+    max-width: calc(100% - 78px - var(--s-3) * 2);
   }
 
-  .delete-btn:hover {
-    transform: translateX(-50%) translateY(-2px);
-  }
-
-  /* With flip showing, the two buttons sit side by side either side of the middle. */
+  /* Beside flip there is less room: a long label (English) takes two lines. */
   .delete-btn:has(~ .flip-btn:not([hidden])) {
-    left: calc(50% + 6px);
-    transform: none;
+    max-width: calc(100% - 78px - 118px - var(--s-3) * 2);
+    padding: 6px var(--s-3);
+    line-height: 1.4;
+    white-space: normal;
   }
 
   .flip-btn {
-    left: auto;
-    right: calc(50% + 6px);
-    transform: none;
-  }
-
-  .flip-btn:hover,
-  .delete-btn:has(~ .flip-btn:not([hidden])):hover {
-    transform: translateY(-2px);
+    left: var(--s-3);
+    right: auto;
   }
 
   /* Messages appear at the top of the scene, clear of the panel and tools. */
@@ -424,6 +419,7 @@
   .pick-palette {
     top: calc(var(--topbar-h) + var(--s-1));
     gap: var(--s-2);
+    max-width: calc(100% - var(--s-5));
     padding: 6px var(--s-3);
   }
 
@@ -434,6 +430,29 @@
   .pick-palette .swatch {
     width: 40px;
     height: 40px;
+  }
+}
+
+/* Narrower phones: all seven colours still fit on one row. */
+@media (max-width: 400px) {
+  .pick-palette .swatches {
+    gap: 5px;
+  }
+
+  .pick-palette .swatch {
+    width: 37px;
+    height: 37px;
+  }
+}
+
+@media (max-width: 350px) {
+  .pick-palette .swatches {
+    gap: 4px;
+  }
+
+  .pick-palette .swatch {
+    width: 32px;
+    height: 32px;
   }
 }
 

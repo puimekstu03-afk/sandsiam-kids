@@ -60,6 +60,8 @@ const fieldStore = (() => {
     list: (place) => backend.list(place),
     /** One field of a region: { page, pages, mine, entries }; page null = the newest field. */
     page: (place, page, size) => (backend.page ? backend.page(place, page, size) : pageFromList(place, page, size)),
+    /** One pagoda by its public id, where the backend knows them (Supabase); else null. */
+    card: (id) => (backend.card ? backend.card(id) : Promise.resolve(null)),
     count: (places) => backend.count(places),
     offer: (state, player, picture) => backend.offer(state, player, picture),
     /** Notes a visit ('open' or 'play') where the backend counts them (Supabase). */

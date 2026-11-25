@@ -304,12 +304,70 @@
   left: calc((100% - var(--panel-w) - var(--layers-room)) / 2);
 }
 
+/* Laptops: the docked panel leaves a narrow space, so the colours drop their label. */
+@media (max-width: 1799px) {
+  .layers-open .pick-label {
+    display: none;
+  }
+
+  .layers-open .pick-palette {
+    padding: var(--s-2) var(--s-3);
+  }
+}
+
+@media (max-width: 1365px) {
+  .pick-label {
+    display: none;
+  }
+
+  .layers-open .pick-palette .swatch {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Undo and redo stand beside the guide rather than under it, flip above them, and remove
+   next to them, below the docked panel. */
+@media (max-width: 1439px) {
+  .layers-open {
+    --guide-w: 128px;
+    --tools-left: calc(var(--edge) + var(--guide-w) + var(--s-2));
+  }
+
+  .layers-open .stage > .guide .guide-face {
+    width: var(--guide-w);
+  }
+
+  .layers-open .stage-tools {
+    left: var(--tools-left);
+    transform: none;
+  }
+
+  .layers-open .delete-btn {
+    left: calc(var(--tools-left) + 172px);
+  }
+
+  .layers-open .flip-btn {
+    left: var(--tools-left);
+    bottom: calc(var(--edge) + 82px);
+  }
+
+  /* The tip's bubble gives way to the buttons. */
+  .layers-open .stage-tools,
+  .layers-open .delete-btn {
+    z-index: 3;
+  }
+}
+
+/* Tablets on their side: two rows of colours, four and three. */
+@media (max-width: 1250px) {
+  .layers-open .pick-palette .swatches {
+    max-width: 200px;
+  }
+}
+
 @media (max-width: 1100px) {
   :root {
     --layers-w: 16.5rem;
-  }
-
-  .layers-open .pick-label {
-    display: none;
   }
 }

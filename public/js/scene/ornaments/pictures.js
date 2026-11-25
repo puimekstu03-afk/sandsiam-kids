@@ -101,14 +101,15 @@ const hueGap = (a, b) => ((a - b + 540) % 360) - 180;
 const ramp = (v, from, to) => Math.max(0, Math.min(1, (v - from) / (to - from)));
 
 /**
- * How much (0…1) a pixel belongs to the part a `tint` colours: 'white' petals, 'cream' wax,
- * or 'grey' silver and an elephant's skin. Measured by how colourful the pixel is (chroma),
- * since very light colours can look strongly saturated in HSL; soft edges, so a petal that
- * fades from white into yellow takes the colour without a seam.
+ * How much (0…1) a pixel belongs to the part a `tint` colours: 'white' petals, 'blush' petals
+ * that fade from white into a coloured heart, 'cream' wax, or 'grey' silver and an elephant's
+ * skin. Measured by how colourful the pixel is (chroma), since very light colours can look
+ * strongly saturated in HSL.
  */
 function paleFor(tint, r, g, b, l) {
   const chroma = (Math.max(r, g, b) - Math.min(r, g, b)) / 255;
   if (tint === 'white') return ramp(chroma, 0.3, 0.16) * ramp(l, 0.5, 0.62);
+  if (tint === 'blush') return ramp(chroma, 0.45, 0.08) * ramp(l, 0.5, 0.62);
   if (tint === 'cream') return ramp(chroma, 0.44, 0.32) * ramp(l, 0.52, 0.64);
   if (tint === 'grey') return ramp(chroma, 0.16, 0.1) * ramp(l, 0.25, 0.33) * ramp(l, 0.95, 0.88);
   return 0;
@@ -129,21 +130,28 @@ function recolourPicture(img, def, color) {
   const data = picturePixels(img);
   if (!data) return img;
   const px = data.data;
+  const tintStart = Math.round((def.tintFrom || 0) * data.height) * data.width * 4;
   for (let i = 0; i < px.length; i += 4) {
     if (px[i + 3] < 8) continue;
-    const [h, s, l] = rgbToHsl(px[i], px[i + 1], px[i + 2]);
-    let rgb = null;
-    let amount = 1;
-    if (shifting && s >= 0.25 && Math.abs(hueGap(h, mainHue)) <= 30) {
-      rgb = ivory ? hslToRgb(45, s * 0.3, 0.62 + l * 0.36) : hslToRgb((h + shift + 360) % 360, Math.min(1, s * (0.7 + ts * 0.4)), l);
-    } else if (def.tint && (amount = paleFor(def.tint, px[i], px[i + 1], px[i + 2], l)) > 0) {
-      // Halfway between its own lightness and the colour's, so petals stay soft and shaded.
-      rgb = ivory ? hslToRgb(45, 0.35, 0.55 + l * 0.42) : hslToRgb(th, ts * (def.tint === 'grey' ? 0.7 : 0.8), l * 0.5 + tl * 0.5);
+    const own = [px[i], px[i + 1], px[i + 2]];
+    const [h, s, l] = rgbToHsl(...own);
+    const pale = def.tint && i >= tintStart ? paleFor(def.tint, ...own, l) : 0;
+    const turns = shifting && s >= 0.25 && Math.abs(hueGap(h, mainHue)) <= 30;
+    if (!turns && pale === 0) continue;
+    // A pixel between white and the main colour mixes the two results, so a petal that fades
+    // from one into the other shows no seam.
+    let rgb = own;
+    if (turns) rgb = ivory ? hslToRgb(45, s * 0.3, 0.62 + l * 0.36) : hslToRgb((h + shift + 360) % 360, Math.min(1, s * (0.7 + ts * 0.4)), l);
+    if (pale > 0) {
+      // Halfway between its own lightness and the colour's, so petals stay soft and shaded;
+      // blush petals stay light, so they never turn darker than the heart they fade into.
+      const light = def.tint === 'blush' ? Math.max(tl, 0.84) : tl;
+      const tinted = ivory ? hslToRgb(45, 0.35, 0.55 + l * 0.42) : hslToRgb(th, ts * (def.tint === 'grey' ? 0.7 : 0.8), l * 0.5 + light * 0.5);
+      rgb = rgb.map((v, k) => v + (tinted[k] - v) * pale);
     }
-    if (!rgb) continue;
-    px[i] += (rgb[0] - px[i]) * amount;
-    px[i + 1] += (rgb[1] - px[i + 1]) * amount;
-    px[i + 2] += (rgb[2] - px[i + 2]) * amount;
+    px[i] = rgb[0];
+    px[i + 1] = rgb[1];
+    px[i + 2] = rgb[2];
   }
   const out = document.createElement('canvas');
   out.width = img.naturalWidth;

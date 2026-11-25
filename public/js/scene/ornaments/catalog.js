@@ -18,7 +18,9 @@
  *   hue    — its main colour, recoloured when the child picks a colour (found by itself if left
  *            out; null when only its white or grey part takes the colour)
  *   tint   — its white ('white': petals), cream ('cream': wax) or grey ('grey': silver, skin) part takes on the
- *            picked colour too, keeping its light and shade
+ *            picked colour too, keeping its light and shade; 'blush' is for white petals that fade
+ *            into a coloured heart
+ *   tintFrom — tint only below this fraction of the picture (a candle's flame keeps its colours)
  *   fixed  — keeps its own colours (national flags, the rainbow ring); no palette is offered
  *   glow   — a soft light that flickers: [x, y] as fractions of the picture
  *   ring   — a flower ring round a tier, strung from these flower heads in turn
@@ -44,12 +46,12 @@ const ORNAMENTS = [
   { key: 'jasmine', h: 64, hue: null, tint: 'white' }, // 12
   { key: 'sunflower', h: 72, hue: 48 }, // 13
   { key: 'hibiscus', h: 66, hue: 0 }, // 14
-  { key: 'plumeria', h: 62, hue: 48, tint: 'white' }, // 15
+  { key: 'plumeria', h: 62, hue: 48, tint: 'blush' }, // 15
   { key: 'orchid', h: 60, hue: 290 }, // 16
   { key: 'ixora', h: 64, hue: 15 }, // 17 (was a bouquet)
   { key: 'cosmos', h: 64, hue: 335 }, // 18 (was a flower pot)
   { key: 'chat', h: 200, hold: 'pole', pole: true, ground: true, sway: 0.03 }, // 19
-  { key: 'candle', h: 66, hold: 'ground', ground: true, hue: null, tint: 'cream', glow: [0.5, 0.08] }, // 20
+  { key: 'candle', h: 66, hold: 'ground', ground: true, hue: null, tint: 'cream', tintFrom: 0.27, glow: [0.5, 0.08] }, // 20
   { key: 'thaiFlag', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 21
   { key: 'lantern', h: 84, hold: 'hook', sway: 0.06, glow: [0.5, 0.5] }, // 22
   { key: 'waterBowl', h: 60, hue: null, tint: 'grey' }, // 23
@@ -68,7 +70,7 @@ const ORNAMENTS = [
   { key: 'ringThai', h: 26, ring: ['marigold', 'jasmine'], hue: 32, tint: 'white' }, // 36 marigold and jasmine by turns
   { key: 'ringRainbow', h: 26, ring: ['marigold', 'rose', 'jasmine', 'ixora', 'cosmos', 'globeAmaranth', 'plumeria'], fixed: true }, // 37
   { key: 'ringCosmos', h: 26, ring: ['cosmos'], hue: 335 }, // 38
-  { key: 'ringPlumeria', h: 26, ring: ['plumeria'], hue: 48, tint: 'white' }, // 39
+  { key: 'ringPlumeria', h: 26, ring: ['plumeria'], hue: 48, tint: 'blush' }, // 39
   // National flags on the Thai flag's pole (drawn in tools/flags/flags.html, saved by tools/flags/render.py).
   { key: 'flag-taiwan', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 40
   { key: 'flag-uk', h: 190, hold: 'pole', pole: true, ground: true, sway: 0.05, fixed: true }, // 41

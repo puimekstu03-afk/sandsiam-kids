@@ -17,6 +17,12 @@ const PLACES = ['north', 'central', 'isan', 'east', 'south'];
  * own test server (localhost), which nobody else can open. Change it if the site moves.
  */
 const SITE_URL = 'https://puimekstu03-afk.github.io/sandsiam-kids/';
+/**
+ * The share server (share-server/), e.g. 'https://<project>.vercel.app'. Links to a pagoda in
+ * the field go through it, so Facebook, X and LINE show that pagoda's own picture. Empty: links
+ * open the game directly and every link shows the same picture (assets/share/card.jpg).
+ */
+const SHARE_URL = '';
 const INTRO_SLIDE = 6; // seconds each region stays on the intro screen
 const REVEAL_TIME = 2.6; // seconds for the pagoda to rise and decorations to pop in
 

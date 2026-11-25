@@ -130,6 +130,45 @@ function drawStoryCard(c, w, h, state, text) {
   c.restore();
 }
 
+/** The picture people see under a shared link (Facebook, X and LINE show it at 1.91:1). */
+const SHARE_CARD = { w: 1200, h: 630, insets: { top: 34, right: 560, bottom: 22, left: 22 } };
+
+/**
+ * The words on a share card, beside the pagoda that renderScene drew with SHARE_CARD.insets:
+ * whose pagoda it is and its blessing. text: {title, season, site}.
+ */
+function drawShareCard(c, w, h, state, text) {
+  const font = (weight, size) => `${weight} ${size}px "Mali", "ZCOOL KuaiLe", "Noto Sans SC", sans-serif`;
+  const x = w - 290;
+  cartoonCard(c, w - 560, 60, 530, h - 130, 44);
+  c.save();
+  c.textAlign = 'center';
+  c.lineJoin = 'round';
+  c.font = font(700, 68);
+  c.lineWidth = 12;
+  c.strokeStyle = INK;
+  c.strokeText('SANDSIAM', x, 148);
+  c.fillStyle = '#ffc93c';
+  c.fillText('SANDSIAM', x, 148);
+
+  c.font = font(700, 40);
+  c.fillStyle = '#e0447e';
+  const title = wrapText(c, text.title, 470, 2);
+  title.forEach((line, i) => c.fillText(line, x, 222 + i * 52));
+
+  c.font = font(600, 31);
+  c.fillStyle = INK;
+  const top = 222 + title.length * 52 + 12;
+  wrapText(c, state.wish || '', 460, title.length > 1 ? 3 : 4).forEach((line, i) => c.fillText(line, x, top + i * 46));
+
+  c.font = font(600, 24);
+  c.fillStyle = '#7a6a8a';
+  c.fillText(text.season, x, h - 138);
+  c.font = font(600, 21);
+  c.fillText(text.site, x, h - 104);
+  c.restore();
+}
+
 /**
  * Paints the full scene and returns the view transform used for hit testing.
  *
