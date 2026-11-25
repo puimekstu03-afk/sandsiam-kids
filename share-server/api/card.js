@@ -32,7 +32,8 @@ async function pagoda(id) {
 
 export async function GET(request) {
   const url = new URL(request.url);
-  const id = url.searchParams.get('id');
+  // /p/<id> is rewritten to ?id=<id> (vercel.json); read the path too, whichever the function is given.
+  const id = url.searchParams.get('id') || url.pathname.split('/').pop();
   const card = await pagoda(id);
 
   const name = card && String(card.name || '').slice(0, 40);

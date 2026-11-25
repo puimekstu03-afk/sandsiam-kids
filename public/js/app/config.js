@@ -22,7 +22,7 @@ const SITE_URL = 'https://puimekstu03-afk.github.io/sandsiam-kids/';
  * the field go through it, so Facebook, X and LINE show that pagoda's own picture. Empty: links
  * open the game directly and every link shows the same picture (assets/share/card.jpg).
  */
-const SHARE_URL = '';
+const SHARE_URL = 'https://sandsiam-share.vercel.app';
 const INTRO_SLIDE = 6; // seconds each region stays on the intro screen
 const REVEAL_TIME = 2.6; // seconds for the pagoda to rise and decorations to pop in
 
